@@ -4,13 +4,13 @@ float transitionProgress = 0; // Avanza gradualmente da 0 a 1 per la transizione
 
 void setup() {
   size(800, 800);
-  currentImage = loadImage("background.jpg");
-  nextImage = loadImage("image4.jpg");
+  currentImage = loadImage("image1.jpg");
+  nextImage = loadImage("image4.png");
   currentImage.resize(width, height);
   nextImage.resize(width, height);
 
   particles = new ArrayList<Particle>();
-  for (int i = 0; i < 8000; i++) {
+  for (int i = 0; i < 20000; i++) {
     particles.add(new Particle(random(width), random(height)));
   }
 }
@@ -29,7 +29,7 @@ void draw() {
   if (transitionProgress >= 1) {
     transitionProgress = 0; // Riparti con una nuova transizione
     currentImage = nextImage; // L'immagine successiva diventa la corrente
-    nextImage = loadImage("image" + int(random(1, 3)) + ".jpg"); // Carica una nuova immagine
+    nextImage = loadImage("image" + int(random(2, 8)) + ".png"); // Carica una nuova immagine
     nextImage.resize(width, height);
   }
 }
