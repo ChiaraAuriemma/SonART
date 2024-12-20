@@ -1,3 +1,10 @@
+//OSC 
+import oscP5.*;
+import netP5.*;
+
+OscP5 oscP5;
+
+
 PImage currentImage, nextImage;
 ArrayList<Particle> particles;
 float transitionProgress = 0; // Avanza gradualmente da 0 a 1 per la transizione
@@ -6,6 +13,10 @@ String[] imagePaths = {"image1.jpg", "image2.jpg", "image3.jpg", "image4.jpg", "
 
 void setup() {
   size(1400, 800);
+  
+  oscP5 = new OscP5(this, 12000);
+  
+  
   currentImage = loadImage(imagePaths[currentImageIndex]);
   nextImage = loadImage(imagePaths[(currentImageIndex + 1) % imagePaths.length]);
   currentImage.resize(width, height);
@@ -16,6 +27,7 @@ void setup() {
     particles.add(new Particle(random(width), random(height)));
   }
 }
+
 
 void draw() {
   background(255);
@@ -36,5 +48,20 @@ void draw() {
     currentImage = nextImage; // L'immagine successiva diventa la corrente
     nextImage = loadImage(imagePaths[(currentImageIndex + 1) % imagePaths.length]); // Carica l'immagine successiva
     nextImage.resize(width, height);
+  }
+}
+
+void oscEvent(OscMessage msg) {
+  println("Messaggio OSC ricevuto:");
+  println("Indirizzo: " + msg.addrPattern());
+  println("Argomenti:");
+  
+  for (int i = 0; i < msg.arguments().length; i++) {
+    println("  Argomento " + i + ": " + msg.get(i).toString());
+  }
+  
+  // Puoi aggiungere azioni personalizzate in base al messaggio ricevuto
+  if (msg.checkAddrPattern("/test")) {
+    println("Messaggio di test ricevuto!");
   }
 }
