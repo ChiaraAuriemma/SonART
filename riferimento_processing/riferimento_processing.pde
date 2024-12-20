@@ -15,8 +15,7 @@ void setup() {
   size(1400, 800);
   
   oscP5 = new OscP5(this, 12000);
-  
-  
+ 
   currentImage = loadImage(imagePaths[currentImageIndex]);
   nextImage = loadImage(imagePaths[(currentImageIndex + 1) % imagePaths.length]);
   currentImage.resize(width, height);
@@ -51,17 +50,10 @@ void draw() {
   }
 }
 
-void oscEvent(OscMessage msg) {
-  println("Messaggio OSC ricevuto:");
-  println("Indirizzo: " + msg.addrPattern());
-  println("Argomenti:");
+void oscEvent(OscMessage theOscMessage) {
+  theOscMessage.print();
   
-  for (int i = 0; i < msg.arguments().length; i++) {
-    println("  Argomento " + i + ": " + msg.get(i).toString());
-  }
-  
-  // Puoi aggiungere azioni personalizzate in base al messaggio ricevuto
-  if (msg.checkAddrPattern("/test")) {
-    println("Messaggio di test ricevuto!");
+  if (theOscMessage.checkAddrPattern("/image")) {
+    print("Evviva");
   }
 }
