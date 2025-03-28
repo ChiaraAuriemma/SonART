@@ -12,8 +12,10 @@ class Particle {
     position = new PVector(x, y);
     velocity = PVector.random2D();
     target = randomTarget(currentImage);
-    w = random(5, 15); // Larghezza casuale
-    h = random(20, 40); // Altezza casuale
+    w = 20;
+    h = 35;
+    //w = random(5, 15); // Larghezza casuale
+    //h = random(20, 25); // Altezza casuale
     rotation = random(TWO_PI); // Rotazione casuale
   }
 
