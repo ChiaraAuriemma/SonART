@@ -24,7 +24,7 @@ def get_filename(path):
 
 
 class AudioTagging(object):
-    def __init__(self, model=None, checkpoint_path=None, device='cuda'):
+    def __init__(self, model=None, checkpoint_path=None,checkpoint_model=None, device='cuda'):
         """Audio tagging inference wrapper.
         """
         if not checkpoint_path:
@@ -80,7 +80,10 @@ class AudioTagging(object):
             checkpoint = torch.load(checkpoint_path, map_location=self.device)
             self.model.load_state_dict(checkpoint['model'])
 
-            torch.save(self.model, "/content/drive/My Drive/SonART/saved_model/panns/panns_model.pth")
+            if checkpoint_model is None:
+                checkpoint_model = "/content/drive/My Drive/SonART/saved_model/panns/panns_model.pth"
+
+            torch.save(self.model, checkpoint_model)
             print(f"💾 Modello istanziato salvato su Drive: /content/drive/My Drive/SonART/saved_model/panns/panns_model.pth")
         else:
             self.model = model
@@ -109,7 +112,7 @@ class AudioTagging(object):
 
 
 class SoundEventDetection(object):
-    def __init__(self, model=None, checkpoint_path=None, device='cuda', interpolate_mode='nearest'):
+    def __init__(self, model=None, checkpoint_path=None,checkpoint_model=None, device='cuda', interpolate_mode='nearest'):
         """Sound event detection inference wrapper.
 
         Args:
@@ -175,7 +178,11 @@ class SoundEventDetection(object):
             checkpoint = torch.load(checkpoint_path, map_location=self.device)
             self.model.load_state_dict(checkpoint['model'])
 
-            torch.save(self.model, "/content/drive/My Drive/SonART/saved_model/panns/panns_model_event_det.pth")
+            if checkpoint_model is None:
+                checkpoint_model = "/content/drive/My Drive/SonART/saved_model/panns/panns_model_event_det.pth"
+
+
+            torch.save(self.model, checkpoint_model)
             print(f"💾 Modello istanziato salvato su Drive: /content/drive/My Drive/SonART/saved_model/panns/panns_model_event_det.pth")
         else:
             self.model = model
