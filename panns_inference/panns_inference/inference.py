@@ -28,7 +28,7 @@ class AudioTagging(object):
         """Audio tagging inference wrapper.
         """
         if not checkpoint_path:
-            checkpoint_path= "/content/drive/My Drive/SonART/saved_model/panns/Cnn14_mAP=0.431.pth"
+            checkpoint_path = os.path.join("/content/drive/My Drive/SonART","saved_model", "panns", "Cnn14_mAP=0.431.pth")
         print('Checkpoint path: {}'.format(checkpoint_path))
 
 
@@ -81,7 +81,8 @@ class AudioTagging(object):
             self.model.load_state_dict(checkpoint['model'])
 
             if checkpoint_model is None:
-                checkpoint_model = "/content/drive/My Drive/SonART/saved_model/panns/panns_model.pth"
+                checkpoint_model = os.path.join("/content/drive/My Drive/SonART","saved_model", "panns", "panns_model.pth")
+            print('Checkpoint model: {}'.format(checkpoint_model))
 
             torch.save(self.model, checkpoint_model)
             print(f"💾 Modello istanziato salvato su Drive: /content/drive/My Drive/SonART/saved_model/panns/panns_model.pth")
@@ -122,7 +123,7 @@ class SoundEventDetection(object):
             interpolate_mode, 'nearest' |'linear'
         """
         if not checkpoint_path:
-            checkpoint_path="/content/drive/My Drive/SonART/saved_model/panns/Cnn14_DecisionLevelMax.pth"
+            checkpoint_path=os.path.join("/content/drive/My Drive/SonART","saved_model", "panns", "Cnn14_DecisionLevelMax.pth")
         print('Checkpoint path: {}'.format(checkpoint_path))
 
 
@@ -179,8 +180,9 @@ class SoundEventDetection(object):
             self.model.load_state_dict(checkpoint['model'])
 
             if checkpoint_model is None:
-                checkpoint_model = "/content/drive/My Drive/SonART/saved_model/panns/panns_model_event_det.pth"
+                checkpoint_model = os.path.join("/content/drive/My Drive/SonART","saved_model", "panns", "panns_model_event_det.pth")
 
+            print('Checkpoint model: {}'.format(checkpoint_model))
 
             torch.save(self.model, checkpoint_model)
             print(f"💾 Modello istanziato salvato su Drive: /content/drive/My Drive/SonART/saved_model/panns/panns_model_event_det.pth")
