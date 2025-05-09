@@ -1,189 +1,158 @@
+// Import delle librerie Java per networking e gestione immagini
 import java.io.*;
 import java.net.*;
 import java.util.Base64;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
-ServerSocket server;
+// === Variabili per la comunicazione server ===
+ServerSocket server;         // Server TCP in ascolto sulla porta 12345
+Socket client;               // Socket connesso al client
+BufferedReader reader;       // Lettore del flusso di input (testo) del client
+Thread receiverThread;       // Thread separato per ricevere dati senza bloccare draw()
 
-PImage currentImage, nextImage;
-ArrayList<Particle> particles;
-float transitionProgress = 0;
-boolean isTransitioning = false;
+// === Immagini ===
+PImage currentImage, nextImage;  // Immagine corrente e prossima per la transizione
 
-int numParticles = 8000;
+// === Matrice di particelle ===
+Particle[][] particles;      // Particelle organizzate in griglia 2D
+
+// === Transizione ===
+float transitionProgress = 0;  // Avanzamento della transizione (da 0 a 1)
+boolean isTransitioning = false;  // Flag per indicare se è in corso la transizione
+
+// === Configurazione griglia di particelle ===
+int spacing = 9;             // Distanza tra le particelle
+int cols, rows;              // Numero di colonne e righe della griglia
 
 void setup() {
-  size(1400, 800);
-  frameRate(60);
+  size(1400, 800);           // Dimensioni finestra
+  frameRate(60);             // FPS
+  smooth();                  // Antialiasing
 
-  // Server TCP
+  // === Creazione server TCP ===
   try {
-    server = new ServerSocket(12345);
-    server.setSoTimeout(10); // Per evitare blocchi
-    println("✅ Server in ascolto sulla porta 12345...");
+    server = new ServerSocket(12345);  // In ascolto sulla porta 12345
+    println("Server in ascolto sulla porta 12345...");
   } catch (IOException e) {
-    println("❌ Errore nella creazione del server: " + e.getMessage());
+    println("Errore nella creazione del server: " + e.getMessage());
   }
 
-  // Immagine nera iniziale
+  // === Immagine iniziale: tutta nera ===
   currentImage = createImage(width, height, RGB);
   currentImage.loadPixels();
   for (int i = 0; i < currentImage.pixels.length; i++) {
-    currentImage.pixels[i] = color(0);
+    currentImage.pixels[i] = color(0);  // Tutti i pixel neri
   }
   currentImage.updatePixels();
-  nextImage = currentImage.copy();
+  nextImage = currentImage.copy();  // nextImage è uguale all'inizio
 
-  // Particelle iniziali
-  particles = new ArrayList<Particle>();
-  for (int i = 0; i < numParticles; i++) {
-    int x = int(random(currentImage.width));
-    int y = int(random(currentImage.height));
-    int col = getAverageColor(currentImage, x, y, 5);
-    particles.add(new Particle(x, y, col));
-  }
+  //Setup della griglia
+  cols = width / spacing;   // Quante colonne nella griglia
+  rows = height / spacing;  // Quante righe
+  particles = new Particle[cols][rows];  // Inizializza array
+  initParticles(currentImage);           // Crea particelle a partire dall'immagine
+
+  startReceiverThread();    // Avvia il thread che ascolta nuove immagini
 }
 
 void draw() {
-  background(255);
+  background(255, 255, 255, 10); // Sfondo bianco semi-trasparente (effetto pittura)
 
-  // Ricezione immagine da client
-  try {
-    Socket client = server.accept();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-    String base64String = reader.readLine();
-
-    if (base64String != null && !base64String.trim().isEmpty()) {
-      byte[] imageBytes = Base64.getDecoder().decode(base64String);
-      ByteArrayInputStream bais = new ByteArrayInputStream(imageBytes);
-      BufferedImage bufferedImage = ImageIO.read(bais);
-
-      if (bufferedImage != null) {
-        PImage received = new PImage(bufferedImage.getWidth(), bufferedImage.getHeight());
-        received.loadPixels();
-        bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), received.pixels, 0, bufferedImage.getWidth());
-        received.updatePixels();
-        received.resize(width, height);
-
-        println("📥 Nuova immagine ricevuta, avvio transizione");
-
-        nextImage = received;
-        startTransition();
-        isTransitioning = true;
-        transitionProgress = 0;
-      }
+  // === Aggiorna e disegna ogni particella ===
+  for (int i = 0; i < cols; i++) {
+    for (int j = 0; j < rows; j++) {
+      Particle p = particles[i][j];
+      p.update();   // Muove la particella
+      p.display();  // La disegna sullo schermo
     }
-
-    reader.close();
-    client.close();
-  } catch (SocketTimeoutException e) {
-    // nessuna connessione: è ok
-  } catch (IOException e) {
-    println("⚠️ Errore nella ricezione immagine: " + e.getMessage());
   }
 
-  // Gestione transizione
+  //Gestione transizione
   if (isTransitioning) {
-    transitionProgress += 0.01;
+    transitionProgress += 0.02;   // Avanza la transizione
     if (transitionProgress >= 1) {
-      transitionProgress = 1;
-      isTransitioning = false;
-      currentImage = nextImage;
+    transitionProgress = 0;
+    isTransitioning = false;
+    currentImage = nextImage.copy();  // ✅ aggiorna immagine di riferimento
+    // non ricreare le particelle
+}
+  }
+}
+
+//Inizializza particelle a partire da un'immagine
+void initParticles(PImage img) {
+  for (int i = 0; i < cols; i++) {
+    for (int j = 0; j < rows; j++) {
+      int x = i * spacing;
+      int y = j * spacing;
+      color c = img.get(x, y);     // Colore del pixel allineato alla griglia
+      particles[i][j] = new Particle(x, y, c);  // Crea nuova particella
     }
   }
-
-  // Aggiorna e disegna particelle
-  for (Particle p : particles) {
-    p.update();
-    p.display();
-  }
 }
 
-// Avvia transizione: imposta nuovi target alle particelle
-void startTransition() {
-  for (Particle p : particles) {
-    int x = int(random(nextImage.width));
-    int y = int(random(nextImage.height));
-    int col = getAverageColor(nextImage, x, y, 5);
-    p.setTarget(x, y, col);
-  }
-}
-
-// Calcolo colore medio locale
-color getAverageColor(PImage img, int x, int y, int size) {
-  int r = 0, g = 0, b = 0, count = 0;
-  for (int i = -size/2; i <= size/2; i++) {
-    for (int j = -size/2; j <= size/2; j++) {
-      int px = constrain(x+i, 0, img.width-1);
-      int py = constrain(y+j, 0, img.height-1);
-      color c = img.get(px, py);
-      r += int(red(c));
-      g += int(green(c));
-      b += int(blue(c));
-      count++;
+//Imposta obiettivi (target) per la transizione
+void assignNextTargets(PImage img) {
+  for (int i = 0; i < cols; i++) {
+    for (int j = 0; j < rows; j++) {
+      int x = i * spacing;
+      int y = j * spacing;
+      color c = img.get(x, y);      // Nuovo colore
+      particles[i][j].setNext(x, y, c);  // Imposta obiettivo per la particella
     }
   }
-  return color(r/count, g/count, b/count);
 }
 
-// === PARTICELLA ===
-class Particle {
-  float x, y;
-  float targetX, targetY;
-  float angle;
-  boolean arrived = false;
-  float progress = 0;
-  float transitionSpeed;
-  int col;
+//Thread per ricevere immagini da un client
+void startReceiverThread() {
+  receiverThread = new Thread(new Runnable() {
+    public void run() {
+      try {
+        client = server.accept();  // Attende connessione del client
+        reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+        println("Client connesso.");
 
-  Particle(float x, float y, int col) {
-    this.x = x;
-    this.y = y;
-    this.targetX = x;
-    this.targetY = y;
-    this.col = col;
-    this.angle = random(TWO_PI);
-    this.transitionSpeed = random(0.01, 0.02);
-  }
+        while (true) {
+          // === Legge i dati Base64 fino a trovare <END> ===
+          StringBuilder base64Builder = new StringBuilder();
+          String line;
+          while ((line = reader.readLine()) != null) {
+            if (line.contains("<END>")) {
+              base64Builder.append(line.replace("<END>", ""));  // Rimuove <END>
+              break;
+            }
+            base64Builder.append(line);
+          }
 
-  void setTarget(float newX, float newY, int newCol) {
-    this.targetX = newX;
-    this.targetY = newY;
-    this.col = newCol;
-    this.progress = 0;
-    this.arrived = false;
-  }
+          // === Decodifica stringa Base64 in immagine ===
+          String base64String = base64Builder.toString();
+          if (!base64String.isEmpty()) {
+            byte[] imageBytes = Base64.getDecoder().decode(base64String); // byte array
+            ByteArrayInputStream bais = new ByteArrayInputStream(imageBytes); // stream
+            BufferedImage bufferedImage = ImageIO.read(bais);  // Java immagine
 
-  void update() {
-    if (!arrived) {
-      float dx = targetX - x;
-      float dy = targetY - y;
-      x += dx * transitionSpeed;
-      y += dy * transitionSpeed;
-      progress += transitionSpeed;
-      if (progress >= 1) {
-        x = targetX;
-        y = targetY;
-        arrived = true;
+            // === Converte BufferedImage in PImage (Processing) ===
+            if (bufferedImage != null) {
+              PImage received = new PImage(bufferedImage.getWidth(), bufferedImage.getHeight());
+              received.loadPixels();
+              bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), received.pixels, 0, bufferedImage.getWidth());
+              received.updatePixels();
+              received.resize(width, height);  // Adatta alle dimensioni del canvas
+
+              println("Immagine ricevuta, avvio transizione");
+              nextImage = received.copy();       // Salva la nuova immagine
+              assignNextTargets(nextImage);     // Imposta le particelle verso la nuova immagine
+              isTransitioning = true;           // Inizia transizione
+              transitionProgress = 0;
+            }
+          }
+        }
+
+      } catch (IOException e) {
+        println("⚠️ Errore nella ricezione immagine: " + e.getMessage());
       }
-    } else {
-      float amp = 10;
-      float freq = 0.1;
-      x = targetX + sin(angle) * amp;
-      y = targetY + cos(angle) * amp;
-      angle += freq;
     }
-  }
-
-  void display() {
-    noStroke();
-    int c = lerpColor(currentImage.get((int)x, (int)y), nextImage.get((int)x, (int)y), transitionProgress);
-    fill(c, 150);
-    pushMatrix();
-    translate(x, y);
-    rotate(angle);
-    ellipse(0, 0, 20, 35);
-    popMatrix();
-  }
+  });
+  receiverThread.start();  // Avvia il thread
 }
