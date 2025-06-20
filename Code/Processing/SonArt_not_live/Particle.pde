@@ -30,27 +30,28 @@ class Particle {
     nextColor = nc;
   }
 
-  void update(boolean transitioning, float transitionProgress, int transitionDuration) {
+  void update(boolean transitioning, float transitionProgress, int transitionDuration, float dt) {
     if (transitioning) {
       float eased = ease(transitionProgress);
-      
       float decay = (transitionDuration < 1000) ? eased : 1.0 - eased;
 
       x = lerp(x, tx, eased);
       y = lerp(y, ty, eased);
 
-      x += sin(angle) * (waveAmplitude * decay);
-      y += cos(angle) * (waveAmplitude * decay);
+      x += sin(angle) * (waveAmplitude * decay) * dt * 30;
+      y += cos(angle) * (waveAmplitude * decay) * dt * 30;
 
-      angle += waveFrequency;
+      angle += waveFrequency * dt * 30;
 
       currentColor = lerpColor(currentColor, nextColor, eased);
     } else {
-      x += sin(angle) * 0.3;
-      y += cos(angle) * 0.3;
-      angle += waveFrequency;
+      float oscillationSpeed = 0.3f;
+      x += sin(angle) * oscillationSpeed * dt * 10;
+      y += cos(angle) * oscillationSpeed * dt * 10;
+
+      angle += waveFrequency * dt * 30;
     }
-  }
+}
 
   void display() {
     pushMatrix();

@@ -1,9 +1,10 @@
 class ScheduledImage {
   int timestamp;
   PImage img;
+  color[][] precomputedColors;  // <-- Aggiungi questa riga!
 
-  ScheduledImage(int timestamp, PImage img) {
-    this.timestamp = timestamp;
-    this.img = img;
+  ScheduledImage(int t, PImage i) {
+    timestamp = t;
+    img = i;
   }
 }
