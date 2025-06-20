@@ -1,10 +1,9 @@
 class TCPImageReceiver {
   ServerSocket server;
   ArrayList<ScheduledImage> queue;
-  int startTime = -1;
 
   TCPImageReceiver(int port) {
-    queue = new ArrayList<ScheduledImage>();
+    queue = new ArrayList<>();
     try {
       server = new ServerSocket(port);
       server.setSoTimeout(10);
@@ -35,12 +34,7 @@ class TCPImageReceiver {
           received.resize(width, height);
 
           queue.add(new ScheduledImage(timestamp, received));
-          println("📥 Ricevuta immagine per t=" + timestamp + "ms");
-
-          if (startTime < 0) {
-            startTime = millis();
-            println("⏱️ Timer avviato a " + startTime);
-          }
+          println("📥 Ricevuta immagine per t=" + timestamp + " ms");
         }
       }
 
@@ -53,15 +47,11 @@ class TCPImageReceiver {
     }
   }
 
-  ScheduledImage getNextImageIfReady() {
-    if (startTime >= 0 && queue.size() > 0) {
-      int elapsed = millis() - startTime;
-      ScheduledImage next = queue.get(0);
-      if (elapsed >= next.timestamp) {
-        queue.remove(0);
-        return next;
-      }
-    }
-    return null;
+  boolean hasImages() {
+    return !queue.isEmpty();
+  }
+
+  ScheduledImage nextImageFromQueue() {
+    return queue.remove(0);
   }
 }
