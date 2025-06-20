@@ -26,9 +26,9 @@ volatile boolean readyForAssign = false;
 
 ScheduledImage currentImage = null;
 
-LinkedList<ScheduledImage> imageQueue = new LinkedList<>();
+Queue<ScheduledImage> imageQueue = new LinkedList<>();
 
-int startTime = -1;
+int startTime = -1;     // quando inizia la sequenza
 int virtualTime = 0;
 
 void setup() {
@@ -43,13 +43,13 @@ void setup() {
 
   particles = new Particle[cols][rows];
   pendingColors = new color[cols][rows];
+  imgs = new PImage[10];
 
   PImage initImage = createImage(width, height, RGB);
   initImage.loadPixels();
   Arrays.fill(initImage.pixels, color(0));
   initImage.updatePixels();
 
-  imgs = new PImage[10];
   imgs[0] = initImage;
 
   initParticles(initImage);
@@ -57,7 +57,6 @@ void setup() {
 
 void draw() {
   background(255, 255, 255, 10);
-
   tcpReceiver.checkForNewImage();
 
   while (tcpReceiver.hasImages()) {
@@ -76,14 +75,24 @@ void draw() {
   if (currentImage == null && !imageQueue.isEmpty()) {
     currentImage = imageQueue.poll();
     imgs[currentIndex] = currentImage.img;
-    println("📥 Prima immagine caricata: timestamp " + currentImage.timestamp);
+  
+    // ⚡️ Inizializzazione dei particle sulla prima immagine
+    initParticles(currentImage.img);
+  
+    println("📥 Prima immagine caricata e inizializzata: timestamp " + currentImage.timestamp);
   }
 
-  if (!transitioning && !imageQueue.isEmpty()) {
+  if (!transitioning && !imageQueue.isEmpty() && currentImage != null) {
     ScheduledImage nextImage = imageQueue.peek();
-    if (nextImage != null && virtualTime >= nextImage.timestamp) {
-      imageQueue.poll();
-      startTransition(nextImage);
+    if (nextImage != null) {
+      int estimatedDuration = nextImage.timestamp - currentImage.timestamp;
+      if (estimatedDuration < 100) estimatedDuration = 100;
+
+      // Avvia la transizione quando mancano estimatedDuration ms al timestamp dell’immagine
+      if (virtualTime >= nextImage.timestamp - estimatedDuration) {
+        imageQueue.poll();
+        startTransition(nextImage);
+      }
     }
   }
 
@@ -123,18 +132,15 @@ void startTransition(ScheduledImage scheduled) {
     readyForAssign = true;
   }).start();
 
-  int T_c = currentImage != null ? currentImage.timestamp : 0;
-  int T_n = scheduled.timestamp;
+  int estimatedDuration = scheduled.timestamp - currentImage.timestamp;
+  if (estimatedDuration < 100) estimatedDuration = 100;
 
-  int duration = T_n - T_c;
-  if (duration < 0) duration = 100;
-
-  currentImage = scheduled;
-
-  transitionDuration = duration;
+  transitionDuration = estimatedDuration;
   transitionStartTime = millis();
   transitionProgress = 0;
   transitioning = true;
+
+  currentImage = scheduled;
 
   println("▶️ Durata transizione: " + transitionDuration + " ms");
 }
@@ -143,8 +149,7 @@ void initParticles(PImage img) {
   img.loadPixels();
   for (int i = 0; i < cols; i++) {
     for (int j = 0; j < rows; j++) {
-      int x = i * spacing;
-      int y = j * spacing;
+      int x = i * spacing, y = j * spacing;
       color c = img.pixels[y * img.width + x];
       particles[i][j] = new Particle(x, y, c);
     }
@@ -163,13 +168,8 @@ void extractColorsInto(PImage img, color[][] dest) {
   img.loadPixels();
   for (int i = 0; i < cols; i++) {
     for (int j = 0; j < rows; j++) {
-      int x = i * spacing;
-      int y = j * spacing;
+      int x = i * spacing, y = j * spacing;
       dest[i][j] = img.pixels[y * img.width + x];
     }
   }
 }
-
-// ===========================================================
-// NON TOCCARE Particle e ScheduledImage
-// ===========================================================

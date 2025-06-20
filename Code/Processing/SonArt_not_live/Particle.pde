@@ -19,7 +19,7 @@ class Particle {
     nextColor = c;
     angle = random(TWO_PI);
     r = random(0.8, 1.2);
-    waveAmplitude = random(5, 10);
+    waveAmplitude = random(5, 15);
     waveFrequency = random(0.03, 0.08);
     particleSize = random(10, 25);
   }
