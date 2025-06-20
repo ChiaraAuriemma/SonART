@@ -47,7 +47,7 @@ void setup() {
 
   PImage initImage = createImage(width, height, RGB);
   initImage.loadPixels();
-  Arrays.fill(initImage.pixels, color(0));
+  Arrays.fill(initImage.pixels, color(0));  // nero
   initImage.updatePixels();
 
   imgs[0] = initImage;
@@ -72,23 +72,20 @@ void draw() {
     virtualTime = millis() - startTime;
   }
 
+  // Se non c'è currentImage e ci sono immagini, avvia la prima transizione da nero
   if (currentImage == null && !imageQueue.isEmpty()) {
-    currentImage = imageQueue.poll();
-    imgs[currentIndex] = currentImage.img;
-  
-    // ⚡️ Inizializzazione dei particle sulla prima immagine
-    initParticles(currentImage.img);
-  
-    println("📥 Prima immagine caricata e inizializzata: timestamp " + currentImage.timestamp);
+    ScheduledImage firstImage = imageQueue.poll();
+    startTransitionFromBlack(firstImage);
   }
 
+  // Gestione transizioni successive
   if (!transitioning && !imageQueue.isEmpty() && currentImage != null) {
     ScheduledImage nextImage = imageQueue.peek();
     if (nextImage != null) {
       int estimatedDuration = nextImage.timestamp - currentImage.timestamp;
       if (estimatedDuration < 100) estimatedDuration = 100;
 
-      // Avvia la transizione quando mancano estimatedDuration ms al timestamp dell’immagine
+      // Avvia la transizione quando siamo vicini al timestamp
       if (virtualTime >= nextImage.timestamp - estimatedDuration) {
         imageQueue.poll();
         startTransition(nextImage);
@@ -104,8 +101,10 @@ void draw() {
   for (int x = 0; x < cols; x++) {
     for (int y = 0; y < rows; y++) {
       Particle p = particles[x][y];
-      p.update(transitioning, transitionProgress, transitionDuration);
-      p.display();
+      if (p != null) {
+        p.update(transitioning, transitionProgress, transitionDuration);
+        p.display();
+      }
     }
   }
 
@@ -120,6 +119,30 @@ void draw() {
       imgs[currentIndex] = currentImage.img;
     }
   }
+}
+
+void startTransitionFromBlack(ScheduledImage scheduled) {
+  println("▶️ Avvio transizione da nero a immagine con timestamp " + scheduled.timestamp);
+
+  imgs[(currentIndex + 1) % imgs.length] = scheduled.img;
+
+  new Thread(() -> {
+    extractColorsInto(scheduled.img, pendingColors);
+    readyForAssign = true;
+  }).start();
+
+  // durata transizione fissa o calcolata dal timestamp rispetto a zero (inizio)
+  int estimatedDuration = scheduled.timestamp; 
+  if (estimatedDuration < 100) estimatedDuration = 100;
+
+  transitionDuration = estimatedDuration;
+  transitionStartTime = millis();
+  transitionProgress = 0;
+  transitioning = true;
+
+  currentImage = scheduled;
+
+  println("▶️ Durata transizione iniziale: " + transitionDuration + " ms");
 }
 
 void startTransition(ScheduledImage scheduled) {

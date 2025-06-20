@@ -34,7 +34,7 @@ class Particle {
     if (transitioning) {
       float eased = ease(transitionProgress);
       
-      float decay = (transitionDuration < 2000) ? eased : 1.0 - eased;
+      float decay = (transitionDuration < 1000) ? eased : 1.0 - eased;
 
       x = lerp(x, tx, eased);
       y = lerp(y, ty, eased);
