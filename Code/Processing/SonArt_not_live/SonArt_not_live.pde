@@ -73,10 +73,15 @@ void draw() {
   }
 
   // Se non c'è currentImage e ci sono immagini, avvia la prima transizione da nero
-  if (currentImage == null && !imageQueue.isEmpty()) {
-    ScheduledImage firstImage = imageQueue.poll();
-    startTransitionFromBlack(firstImage);
+   if (currentImage == null && !imageQueue.isEmpty()) {
+    ScheduledImage firstImage = imageQueue.peek();
+    if (virtualTime >= firstImage.timestamp) {
+      imageQueue.poll();
+      println("⏰ Avvio prima transizione a virtualTime=" + virtualTime + " (timestamp=" + firstImage.timestamp + ")");
+      startTransitionFromBlack(firstImage);
+    }
   }
+
 
   // Gestione transizioni successive
   if (!transitioning && !imageQueue.isEmpty() && currentImage != null) {
