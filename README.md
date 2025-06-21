@@ -1,2 +1,5 @@
 # SonART
-Sound-inspired images that change dynamically.
+
+<p align="center">
+    <img src="deliveries/Logo_SonArt.png" alt="alt text">
+</p>
