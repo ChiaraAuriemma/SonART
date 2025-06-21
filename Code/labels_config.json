@@ -1,0 +1,72 @@
+{
+  "replacements": {
+    "Motor vehicle (road)": "Motor vehicle",
+    "Police car (siren)": "Police car",
+    "Ambulance (siren)": "Ambulance",
+    "Fire engine, fire truck (siren)": "Fire truck",
+    "Light engine (high frequency)": "Light engine",
+    "Medium engine (mid frequency)": "Medium engine",
+    "Heavy engine (low frequency)": "Heavy engine",
+    "Cupboard open or close": "Cupboard",
+    "Drawer open or close": "Drawer",
+    "Filing (rasp)": "Rasp",
+    "Wind noise (microphone)": "Wind",
+    "Tick-tock": "Clock",
+    "Drum kit": "Drum",
+    "Oink": "Pig",
+    "Bleat": "Goat",
+    "Gobble": "Turkey",
+    "Quack": "Duck",
+    "Honk": "Goose",
+    "Roar": "Lion",
+    "Coo": "Pigeon, dove",
+    "Caw": "Crow",
+    "Hoot": "Owl",
+    "Patter": "Mouse",
+    "Croak": "Frog",
+    "Rattle": "Snake",
+    "Whale vocalization": "Whale",
+    "Bird vocalization, bird call, bird song": "Bird",
+    "Roaring cats (lions, tigers)": "Lion"
+  },
+
+  "groups": {
+    "Dog": [
+      "Bark",
+      "Yip",
+      "Howl",
+      "Bow-wow",
+      "Growling",
+      "Whimper (dog)"
+    ],
+    "Cat": [
+      "Purr",
+      "Meow",
+      "Hiss",
+      "Caterwaul"
+    ],
+    "Horse": [
+      "Clip-clop",
+      "Neigh, whinny"
+    ],
+    "Cattle, bovinae": [
+      "Moo",
+      "Cowbell"
+    ],
+    "Chicken, rooster": [
+      "Cluck",
+      "Crowing, cock-a-doodle-doo"
+    ],
+    "Bird": [
+      "Chirp, tweet",
+      "Squawk",
+      "Bird flight, flapping wings"
+    ],
+    "Insect": [
+        "Buzz",
+        "Mosquito",
+        "Fly, housefly",
+        "Cricket"
+    ]
+  }
+}
