@@ -3,22 +3,17 @@ class Particle {
   float tx, ty;
   color currentColor;
   color nextColor;
-  float angle, r;
 
-  float waveAmplitude;
-  float waveFrequency;
-  float particleSize;
+  float angle, waveAmplitude, waveFrequency, particleSize;
 
   Particle(float x, float y, color c) {
     this.x = x;
     this.y = y;
     this.tx = x;
     this.ty = y;
-
     currentColor = c;
     nextColor = c;
     angle = random(TWO_PI);
-    r = random(0.8, 1.2);
     waveAmplitude = random(5, 15);
     waveFrequency = random(0.03, 0.08);
     particleSize = random(10, 25);
@@ -30,28 +25,25 @@ class Particle {
     nextColor = nc;
   }
 
-  void update(boolean transitioning, float transitionProgress, int transitionDuration, float dt) {
+  void update(boolean transitioning, float progress, float dt) {
     if (transitioning) {
-      float eased = ease(transitionProgress);
-      float decay = (transitionDuration < 1000) ? eased : 1.0 - eased;
+      float eased = ease(progress); 
+      float decay = 1.0 - eased;
 
       x = lerp(x, tx, eased);
       y = lerp(y, ty, eased);
 
-      x += sin(angle) * (waveAmplitude * decay) * dt * 30;
-      y += cos(angle) * (waveAmplitude * decay) * dt * 30;
+      x += sin(angle) * waveAmplitude * decay * dt * 30;
+      y += cos(angle) * waveAmplitude * decay * dt * 30;
 
       angle += waveFrequency * dt * 30;
-
       currentColor = lerpColor(currentColor, nextColor, eased);
     } else {
-      float oscillationSpeed = 0.3f;
-      x += sin(angle) * oscillationSpeed * dt * 10;
-      y += cos(angle) * oscillationSpeed * dt * 10;
-
+      x += sin(angle) * 0.3 * dt * 10;
+      y += cos(angle) * 0.3 * dt * 10;
       angle += waveFrequency * dt * 30;
     }
-}
+  }
 
   void display() {
     pushMatrix();

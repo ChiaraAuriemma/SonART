@@ -25,18 +25,20 @@ int virtualTime = 0;
 
 boolean transitioning = false;
 float transitionProgress = 0;
-int transitionDuration = 0;
-int transitionStartTime = 0;
+float transitionDuration = 0;   // in milliseconds
+int transitionStartTime = 0;    // in milliseconds
 
-int currentIndex = 0;
-float lastTime = 0; 
+float lastTime = 0;
 
+int nextTimestamp = 0;
+
+// -----------------------------------------------------
 void setup() {
-  fullScreen(P2D);  // Avvia a schermo intero
+  fullScreen(P2D);
   smooth();
   frameRate(60);
-  
-  lastTime = millis() / 1000.0;  // tempo in secondi
+
+  lastTime = millis() / 1000.0;
 
   cols = width / spacing;
   rows = height / spacing;
@@ -55,38 +57,39 @@ void setup() {
   initParticles(imgs[0]);
   pendingColors = new color[cols][rows];
 
-  // Ricezione immagini in thread separato
+  // Thread per ricezione immagini
   new Thread(() -> {
     while (true) {
       ScheduledImage img = tcpReceiver.nextImageBlocking();
       imageProcessor.submit(() -> {
         PImage scaled = img.img.copy();
-        scaled.resize(width, height); // 🔄 ridimensiona al fullscreen
+        scaled.resize(width, height);
         color[][] buffer = new color[cols][rows];
         extractColorsInto(scaled, buffer);
         img.precomputedColors = buffer;
         imageQueue.add(img);
-        println("Enqueued image with timestamp " + img.timestamp);
       });
     }
   }).start();
 }
 
+// -----------------------------------------------------
 void draw() {
   background(255, 255, 255, 10);
-  
+
   float currentTime = millis() / 1000.0;
-  float dt = currentTime - lastTime;  // tempo trascorso dall'ultimo frame in secondi
+  float dt = currentTime - lastTime;
   lastTime = currentTime;
 
   if (startTime < 0 && !imageQueue.isEmpty()) {
     startTime = millis();
   }
+
   if (startTime >= 0) {
     virtualTime = millis() - startTime;
   }
 
-  // Avvio prima transizione
+  // Prima immagine (inizio visualizzazione)
   if (currentImage == null && !imageQueue.isEmpty()) {
     ScheduledImage first = imageQueue.peek();
     if (virtualTime >= first.timestamp) {
@@ -94,24 +97,52 @@ void draw() {
       pendingColors = first.precomputedColors;
       readyForAssign = true;
       currentImage = first;
-      startTransitionFromBlack(first);
+
+      // Prima transizione da nero (50% del tempo fino a first.timestamp)
+      transitionDuration = first.timestamp * 0.1f;
+      transitionStartTime = virtualTime;
+      transitioning = true;
+      transitionProgress = 0;
+      println("[DEBUG] Prima immagine visualizzata a virtualTime=" + virtualTime + " ms, timestamp previsto=" + first.timestamp);
+  
     }
   }
 
-  // Transizione successiva
+  // Gestione transizione tra immagini successive
   if (!transitioning && !imageQueue.isEmpty() && currentImage != null) {
     ScheduledImage next = imageQueue.peek();
-    int estimatedDuration = max(next.timestamp - currentImage.timestamp, 100);
+    int interval = next.timestamp - currentImage.timestamp;
 
-    // Cambiato da '==' a '>=' per avviare la transizione
-    if (virtualTime >= next.timestamp - estimatedDuration) {
-      println("Starting transition: virtualTime=" + virtualTime + ", next.timestamp=" + next.timestamp + ", estimatedDuration=" + estimatedDuration);
+    transitionDuration = interval * 0.1f;  // 50% come durata di transizione
+
+    int transitionStartThreshold = next.timestamp - (int)transitionDuration;
+
+    // Se siamo arrivati al punto di inizio transizione
+    if (virtualTime >= transitionStartThreshold) {
+      transitioning = true;
+      transitionStartTime = transitionStartThreshold;  // Forza l'inizio transizione al momento corretto
+
       imageQueue.poll();
       pendingColors = next.precomputedColors;
       readyForAssign = true;
-      startTransition(next);
       currentImage = next;
+      transitionProgress = 0;
+      
+      println("[DEBUG] Prima immagine visualizzata a virtualTime=" + virtualTime + " ms, timestamp previsto=" + next.timestamp);
     }
+  }
+
+  // Aggiorna progressione della transizione
+  if (transitioning) {
+    int elapsed = virtualTime - transitionStartTime;
+    transitionProgress = constrain((float)elapsed / transitionDuration, 0, 1);
+
+    if (elapsed >= transitionDuration) {
+      transitioning = false;
+      transitionProgress = 1.0f;
+    }
+  } else {
+    transitionProgress = 1.0f;
   }
 
   if (readyForAssign) {
@@ -119,43 +150,16 @@ void draw() {
     readyForAssign = false;
   }
 
-  // Aggiorna e disegna particelle
+  // Aggiorna e disegna le particelle con la progressione di transizione
   for (int x = 0; x < cols; x++) {
     for (int y = 0; y < rows; y++) {
-      particles[x][y].update(transitioning, transitionProgress, transitionDuration, dt);
+      particles[x][y].update(transitioning, transitionProgress, dt);
       particles[x][y].display();
     }
   }
-
-  if (transitioning) {
-    int elapsed = millis() - transitionStartTime;
-    transitionProgress = constrain(elapsed / (float)transitionDuration, 0, 1);
-    if (transitionProgress >= 1) {
-      transitioning = false;
-      currentIndex = (currentIndex + 1) % imgs.length;
-      imgs[currentIndex] = currentImage.img;
-    }
-  }
 }
 
-// Avvia transizione da nero con durata fissa
-void startTransitionFromBlack(ScheduledImage img) {
-  transitionDuration = 2000;  // Durata fissa 2 secondi
-  transitionStartTime = millis();
-  transitionProgress = 0;
-  transitioning = true;
-}
-
-// Avvia transizione tra immagini
-void startTransition(ScheduledImage img) {
-  int estimatedDuration = max(img.timestamp - currentImage.timestamp, 100);
-  transitionDuration = estimatedDuration;
-  transitionStartTime = millis();
-  transitionProgress = 0;
-  transitioning = true;
-}
-
-// Inizializza le particelle nere
+// -----------------------------------------------------
 void initParticles(PImage img) {
   img.loadPixels();
   for (int i = 0; i < cols; i++) {
@@ -167,7 +171,7 @@ void initParticles(PImage img) {
   }
 }
 
-// Applica i colori pending
+// -----------------------------------------------------
 void applyPendingColors() {
   for (int i = 0; i < cols; i++) {
     for (int j = 0; j < rows; j++) {
@@ -176,7 +180,7 @@ void applyPendingColors() {
   }
 }
 
-// Estrae i colori da un’immagine
+// -----------------------------------------------------
 void extractColorsInto(PImage img, color[][] dest) {
   img.loadPixels();
   for (int i = 0; i < cols; i++) {
