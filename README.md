@@ -1,6 +1,10 @@
 # SonART
 
 <p align="center">
+  <em>“Every sound tells a story. We make sure it’s seen.”</em><br>
+</p>
+
+<p align="center">
     <img src="deliveries/Logo2.png" alt="alt text">
 </p>
 
