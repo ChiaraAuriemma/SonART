@@ -9,7 +9,6 @@
         "Babbling",
         "Speech synthesizer",
         "Shout",
-        "Bellow",
         "Whoop",
         "Yell",
         "Battle cry",
@@ -94,6 +93,7 @@
         "Neigh, whinny",
         "Cattle, bovinae",
         "Moo",
+        "Bellow",
         "Cowbell",
         "Pig",
         "Oink",
@@ -398,7 +398,6 @@
         "Typewriter",
         "Computer keyboard",
         "Writing",
-        "Alarm",
         "Telephone",
         "Telephone bell ringing",
         "Ringtone",
@@ -410,6 +409,7 @@
         "Radio"
     ],
     "Alarms and Mechanical Sounds": [
+        "Alarm",
         "Alarm clock",
         "Siren",
         "Civil defense siren",
@@ -532,10 +532,10 @@
         "Silence",
         "Sine wave",
         "Harmonic",
+        "Pulse",
+        
         "Chirp tone",
         "Sound effect",
-        "Pulse",
-
         "Electronic tuner",
         "Effects unit",
         "Chorus effect"
@@ -543,16 +543,17 @@
     "Acoustic Environment and Space": [
         "Inside, small room",
         "Inside, large room or hall",
-        "Inside, public space",
         "Outside, urban or manmade",
         "Outside, rural or natural",
 
-        "Field recording"
+        "Field recording",
+        "Inside, public space"
     ],
     "Audio Processing Effects Sounds": [
+        "Noise",
+
         "Reverberation",
         "Echo",
-        "Noise",
         "Environmental noise",
         "Static",
         "Mains hum",
