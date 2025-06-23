@@ -261,9 +261,10 @@
       "Dial tone",
       "Busy signal"
     ],
-    "Siren": [
+    "Civil defense siren": [
       "Civil defense siren",
-      "Foghorn"
+      "Foghorn",
+      "Siren"
     ],
     "Alarm": [
       "Alarm",
