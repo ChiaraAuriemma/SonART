@@ -15,6 +15,19 @@
 - ####  Anna Fusari &nbsp;([@AnnaFusari](https://github.com/AnnaFusari))<br> 10561236&nbsp;&nbsp; anna.fusari@mail.polimi.it
 - ####  Diego Pini &nbsp;([@DiegoPini](https://github.com/DiegoPini))<br> 10668724&nbsp;&nbsp; diego.pini@mail.polimi.it
 
+## Description:
+SonART is an application designed to help artists with limited resources bring their performances to life, enhancing them through an original technology.
+
+The artist can upload an audio track they intend to use during their performance, and SonART will classify the sounds it contains and transform them into images that are always unique, thanks to the generative AI. These visuals will appear on screen in sync with the sounds they represent. To make the experience even more visually engaging, a custom Processing script modifies the images to give them a unique artistic flair. The user experience is simplified through a built-in GUI within the notebook, guiding users through the file upload and processing steps. The GUI also allows customization of certain parameters to improve the final result.
+
+While the application works also with musical tracks and instruments, it is primarily designed to accompany theatrical performances, where environmental or narrative-driven sounds are used. In this context, SonART generates dynamic visual backdrops. This is one of the system’s key features, distinguishing it from other applications that are mainly intended to accompany musical performances.
+
+Although this was the original concept that inspired the project, SonART also lends itself to more playful or educational purposes: “Aren’t you curious to see how that track will be transformed?” It can help children associate sounds with images in a fun way, enhance storytelling during a Dungeons & Dragons session by preparing sounds and letting SonART handle the visuals, or even make performances more inclusive for the hearing impaired. You can also use it during relaxation sessions, pairing nature sounds with beautiful, evolving imagery.
+
+In short, the only limit is your creativity.
+
+## How to use:
+
 ## References:
 ### Audio part:
 - Qiuqiang Kong, Yin Cao, Turab Iqbal, Yuxuan Wang, Wenwu Wang, Mark D. Plumbley. "PANNs: Large-Scale Pretrained Audio Neural Networks for Audio Pattern Recognition." arXiv preprint arXiv:1912.10211 (2019)
