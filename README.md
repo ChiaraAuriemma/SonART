@@ -15,3 +15,8 @@
 - ####  Anna Fusari &nbsp;([@AnnaFusari](https://github.com/AnnaFusari))<br> 10561236&nbsp;&nbsp; anna.fusari@mail.polimi.it
 - ####  Diego Pini &nbsp;([@DiegoPini](https://github.com/DiegoPini))<br> 10668724&nbsp;&nbsp; diego.pini@mail.polimi.it
 
+## References:
+- Qiuqiang Kong, Yin Cao, Turab Iqbal, Yuxuan Wang, Wenwu Wang, Mark D. Plumbley. "PANNs: Large-Scale Pretrained Audio Neural Networks for Audio Pattern Recognition." arXiv preprint arXiv:1912.10211 (2019)
+- https://github.com/qiuqiangkong/panns_inference/tree/master
+- https://github.com/qiuqiangkong/audioset_tagging_cnn?tab=readme-ov-file
+- https://github.com/yinkalario/Sound-Event-Detection-AudioSet/tree/master
