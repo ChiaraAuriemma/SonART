@@ -36,6 +36,16 @@ To use the application, you need to set up your Google Drive. This operation onl
 4. Create a folder named saved_model.
 5. Upload the files filterable_labels.json and labels_config.json (both available in the repository) into the SonART folder.
 
+### ngrok setup:
+
+### Use the application:
+1. Open the file SonART_code.ipynb.
+2. In the Processing connection section, enter the address and port.
+3. Run all the cells in the "Run for setup" and "GUI" sections.
+4. Upload an audio file through the GUI.
+5. Open the Processing script and run it.
+6. Use the Play button in the GUI.
+
 ## References:
 ### Audio part:
 - Qiuqiang Kong, Yin Cao, Turab Iqbal, Yuxuan Wang, Wenwu Wang, Mark D. Plumbley. "PANNs: Large-Scale Pretrained Audio Neural Networks for Audio Pattern Recognition." arXiv preprint arXiv:1912.10211 (2019)
