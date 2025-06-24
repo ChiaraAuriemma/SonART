@@ -24,7 +24,7 @@ def get_filename(path):
 
 
 class AudioTagging(object):
-    def __init__(self, model=None, checkpoint_path=None,checkpoint_model=None, device='cuda'):
+    def __init__(self, checkpoint_path=None,checkpoint_model=None, device='cuda'):
         """Audio tagging inference wrapper.
         """
         if not checkpoint_path:
@@ -43,7 +43,7 @@ class AudioTagging(object):
             
         # Procedi con il download
         if not os.path.exists(checkpoint_path) or os.path.getsize(checkpoint_path) < 3e8:
-            print("⚠️ File non trovato o corrotto. Scarico il modello...")
+            print("⚠️ File non trovato o corrotto. Scarico i pesi...")
             
             zenodo_path = "https://zenodo.org/record/3987831/files/Cnn14_mAP%3D0.431.pth?download=1"
             
@@ -71,24 +71,32 @@ class AudioTagging(object):
         self.labels = labels
         self.classes_num = classes_num
 
+
+        # Imposta percorso di default se checkpoint_model non è stato fornito
+        if checkpoint_model is None:
+            checkpoint_model = os.path.join("/content/drive/My Drive/SonART","saved_model", "panns", "panns_model.pth")
+            print('Checkpoint model: {}'.format(checkpoint_model))
+
         # Model
-        if model is None:
+        if os.path.exists(checkpoint_model):
+            # ✅ Il modello salvato esiste già: caricalo
+            self.model = torch.load(checkpoint_model, map_location=self.device)
+            print(f"✅ Modello caricato da: {checkpoint_model}")
+        else:
+            # ❌ Il file non esiste: crea e salva il modello
+            print(f"⚠️ Modello non trovato. Creazione di un nuovo modello in corso...")
+
             self.model = Cnn14(sample_rate=32000, window_size=1024, 
                 hop_size=320, mel_bins=64, fmin=50, fmax=14000, 
                 classes_num=self.classes_num)
-            
+
             checkpoint = torch.load(checkpoint_path, map_location=self.device)
             self.model.load_state_dict(checkpoint['model'])
 
-            if checkpoint_model is None:
-                checkpoint_model = os.path.join("/content/drive/My Drive/SonART","saved_model", "panns", "panns_model.pth")
-            print('Checkpoint model: {}'.format(checkpoint_model))
-
+            os.makedirs(os.path.dirname(checkpoint_model), exist_ok=True)
             torch.save(self.model, checkpoint_model)
-            print(f"💾 Modello istanziato salvato su Drive: /content/drive/My Drive/SonART/saved_model/panns/panns_model.pth")
-        else:
-            self.model = model
-            print("Il modello esiste già!")
+
+            print(f"💾 Nuovo modello salvato in: {checkpoint_model}")
 
 
         # Parallel
