@@ -39,7 +39,7 @@ To use the application, you need to set up your Google Drive. This operation onl
 ### ngrok setup:
 
 ### Use the application:
-1. Open the file SonART_code.ipynb.
+1. Open the file SonART_code.ipynb on Google Colab.
 2. In the Processing connection section, enter the address and port.
 3. Run all the cells in the "Run for setup" and "GUI" sections.
 4. Upload an audio file through the GUI.
