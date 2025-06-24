@@ -27,6 +27,12 @@ Although this was the original concept that inspired the project, SonART also le
 In short, the only limit is your creativity.
 
 ## How to use:
+### Google Drive setup:
+To use the application, you need to set up your Google Drive. This operation only needs to be done once, and after that, you’ll be ready to use the application anytime you want:
+
+1. In your Google Drive, create a folder named SonART.
+2. Inside the SonART folder, create a subfolder named Code.
+3. In the Code folder, upload the panns-inference folder found in the repository.
 
 ## References:
 ### Audio part:
