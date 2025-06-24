@@ -72,7 +72,7 @@ class AudioTagging(object):
         # Model
         if os.path.exists(checkpoint_model):
             # The saved model already exists: load it
-            self.model = torch.load(checkpoint_model, map_location=self.device)
+            self.model = torch.load(checkpoint_model, map_location=self.device, weights_only=False)
             print(f"✅ Model uploaded by: {checkpoint_model}")
         else:
             # The file does not exist: create and save the model
@@ -112,6 +112,7 @@ class AudioTagging(object):
         return clipwise_output, embedding
 
 
+
 class SoundEventDetection(object):
     def __init__(self, model=None, checkpoint_path=None, device='cuda', interpolate_mode='nearest'):
         """Sound event detection inference wrapper.
@@ -123,44 +124,12 @@ class SoundEventDetection(object):
             interpolate_mode, 'nearest' |'linear'
         """
         if not checkpoint_path:
-            checkpoint_path="/content/drive/My Drive/SonART/saved_model/panns/Cnn14_DecisionLevelMax.pth"
+            checkpoint_path='{}/panns_data/Cnn14_DecisionLevelMax.pth'.format(str(Path.home()))
         print('Checkpoint path: {}'.format(checkpoint_path))
 
-
-        checkpoint_dir = os.path.dirname(checkpoint_path)  # Ottieni la directory del file
-
-        # Verifica se la cartella esiste, altrimenti la crea
-        if not os.path.exists(checkpoint_dir):
-            print(f"🔄 La cartella non esiste. Creando la cartella: {checkpoint_dir}")
-            os.makedirs(checkpoint_dir, exist_ok=True)
-        else:
-            print(f"✅ La cartella esiste già: {checkpoint_dir}")
-            
-        # Procedi con il download
         if not os.path.exists(checkpoint_path) or os.path.getsize(checkpoint_path) < 3e8:
-            print("⚠️ File non trovato o corrotto. Scarico il modello...")
-            
-            zenodo_path = "https://zenodo.org/record/3987831/files/Cnn14_DecisionLevelMax_mAP%3D0.385.pth?download=1"
-
-            
-            # Scarica il modello
-            os.system(f'wget -O "{checkpoint_path}" "{zenodo_path}"')
-
-            # Controlla la dimensione del file
-            if os.path.exists(checkpoint_path):
-                file_size = os.path.getsize(checkpoint_path) / (1024 * 1024)  # Converti in MB
-                if file_size < 300:
-                    print(f"⚠️ Attenzione: il file è troppo piccolo ({file_size:.2f} MB), potrebbe essere corrotto!")
-                else:
-                    print(f"✅ File scaricato correttamente ({file_size:.2f} MB)")
-            else:
-                raise FileNotFoundError("❌ Errore: il file non è stato scaricato. Controlla la connessione.")
-        else:
-            print("✅ Il file esiste già, nessun download necessario.")
-
-        #if not os.path.exists(checkpoint_path) or os.path.getsize(checkpoint_path) < 3e8:
-            #create_folder(os.path.dirname(checkpoint_path))
-            #os.system('wget -O "{}" https://zenodo.org/record/3987831/files/Cnn14_DecisionLevelMax_mAP%3D0.385.pth?download=1'.format(checkpoint_path))
+            create_folder(os.path.dirname(checkpoint_path))
+            os.system('wget -O "{}" https://zenodo.org/record/3987831/files/Cnn14_DecisionLevelMax_mAP%3D0.385.pth?download=1'.format(checkpoint_path))
 
         if device == 'cuda' and torch.cuda.is_available():
             self.device = 'cuda'
@@ -175,16 +144,11 @@ class SoundEventDetection(object):
             self.model = Cnn14_DecisionLevelMax(sample_rate=32000, window_size=1024, 
                 hop_size=320, mel_bins=64, fmin=50, fmax=14000, 
                 classes_num=self.classes_num, interpolate_mode=interpolate_mode)
-
-            checkpoint = torch.load(checkpoint_path, map_location=self.device)
-            self.model.load_state_dict(checkpoint['model'])
-
-            torch.save(self.model, "/content/drive/My Drive/SonART/saved_model/panns/panns_model_event_det.pth")
-            print(f"💾 Modello istanziato salvato su Drive: /content/drive/My Drive/SonART/saved_model/panns/panns_model_event_det.pth")
         else:
             self.model = model
-            print("Il modello esiste già!")
         
+        checkpoint = torch.load(checkpoint_path, map_location=self.device)
+        self.model.load_state_dict(checkpoint['model'])
 
         # Parallel
         if 'cuda' in str(self.device):
@@ -207,4 +171,3 @@ class SoundEventDetection(object):
         framewise_output = output_dict['framewise_output'].data.cpu().numpy()
 
         return framewise_output
-
