@@ -33,6 +33,8 @@ To use the application, you need to set up your Google Drive. This operation onl
 1. In your Google Drive, create a folder named SonART.
 2. Inside the SonART folder, create a subfolder named Code.
 3. In the Code folder, upload the panns-inference folder found in the repository.
+4. Create a folder named saved_model.
+5. Upload the files filterable_labels.json and labels_config.json (both available in the repository) into the SonART folder.
 
 ## References:
 ### Audio part:
