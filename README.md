@@ -16,6 +16,7 @@
 - ####  Diego Pini &nbsp;([@DiegoPini](https://github.com/DiegoPini))<br> 10668724&nbsp;&nbsp; diego.pini@mail.polimi.it
 
 ## References:
+### Audio part:
 - Qiuqiang Kong, Yin Cao, Turab Iqbal, Yuxuan Wang, Wenwu Wang, Mark D. Plumbley. "PANNs: Large-Scale Pretrained Audio Neural Networks for Audio Pattern Recognition." arXiv preprint arXiv:1912.10211 (2019)
 - https://github.com/qiuqiangkong/panns_inference/tree/master
 - https://github.com/qiuqiangkong/audioset_tagging_cnn?tab=readme-ov-file
