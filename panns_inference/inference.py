@@ -31,36 +31,28 @@ class AudioTagging(object):
             checkpoint_path = os.path.join("/content/drive/My Drive/SonART","saved_model", "panns", "Cnn14_mAP=0.431.pth")
         print('Checkpoint path: {}'.format(checkpoint_path))
 
-
-        checkpoint_dir = os.path.dirname(checkpoint_path)  # Ottieni la directory del file
-
-        # Verifica se la cartella esiste, altrimenti la crea
-        if not os.path.exists(checkpoint_dir):
-            print(f"🔄 La cartella non esiste. Creando la cartella: {checkpoint_dir}")
-            os.makedirs(checkpoint_dir, exist_ok=True)
-        else:
-            print(f"✅ La cartella esiste già: {checkpoint_dir}")
             
-        # Procedi con il download
+        # Proceed with download
         if not os.path.exists(checkpoint_path) or os.path.getsize(checkpoint_path) < 3e8:
-            print("⚠️ File non trovato o corrotto. Scarico i pesi...")
+            print("⚠️ File not found or corrupt. Downloading weights...")
+            
+            os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
             
             zenodo_path = "https://zenodo.org/record/3987831/files/Cnn14_mAP%3D0.431.pth?download=1"
             
-            # Scarica il modello
             os.system(f'wget -O "{checkpoint_path}" "{zenodo_path}"')
 
-            # Controlla la dimensione del file
+            # Check file size
             if os.path.exists(checkpoint_path):
-                file_size = os.path.getsize(checkpoint_path) / (1024 * 1024)  # Converti in MB
+                file_size = os.path.getsize(checkpoint_path) / (1024 * 1024)  
                 if file_size < 300:
-                    print(f"⚠️ Attenzione: il file è troppo piccolo ({file_size:.2f} MB), potrebbe essere corrotto!")
+                    print(f"⚠️ Warning: the file is too small ({file_size:.2f} MB), it might be corrupted!")
                 else:
-                    print(f"✅ File scaricato correttamente ({file_size:.2f} MB)")
+                    print(f"✅ File downloaded successfully ({file_size:.2f} MB)")
             else:
-                raise FileNotFoundError("❌ Errore: il file non è stato scaricato. Controlla la connessione.")
+                raise FileNotFoundError("❌ Error: File not downloaded. Check your connection.")
         else:
-            print("✅ Il file esiste già, nessun download necessario.")
+            print("✅ File already exists, no download needed.")
 
 
         if device == 'cuda' and torch.cuda.is_available():
@@ -72,19 +64,19 @@ class AudioTagging(object):
         self.classes_num = classes_num
 
 
-        # Imposta percorso di default se checkpoint_model non è stato fornito
+        # Set default path if checkpoint_model not provided
         if checkpoint_model is None:
             checkpoint_model = os.path.join("/content/drive/My Drive/SonART","saved_model", "panns", "panns_model.pth")
             print('Checkpoint model: {}'.format(checkpoint_model))
 
         # Model
         if os.path.exists(checkpoint_model):
-            # ✅ Il modello salvato esiste già: caricalo
+            # The saved model already exists: load it
             self.model = torch.load(checkpoint_model, map_location=self.device)
-            print(f"✅ Modello caricato da: {checkpoint_model}")
+            print(f"✅ Model uploaded by: {checkpoint_model}")
         else:
-            # ❌ Il file non esiste: crea e salva il modello
-            print(f"⚠️ Modello non trovato. Creazione di un nuovo modello in corso...")
+            # The file does not exist: create and save the model
+            print(f"⚠️ Model not found. Creating a new model...")
 
             self.model = Cnn14(sample_rate=32000, window_size=1024, 
                 hop_size=320, mel_bins=64, fmin=50, fmax=14000, 
@@ -96,7 +88,7 @@ class AudioTagging(object):
             os.makedirs(os.path.dirname(checkpoint_model), exist_ok=True)
             torch.save(self.model, checkpoint_model)
 
-            print(f"💾 Nuovo modello salvato in: {checkpoint_model}")
+            print(f"💾 New model saved in: {checkpoint_model}")
 
 
         # Parallel
@@ -118,105 +110,3 @@ class AudioTagging(object):
         embedding = output_dict['embedding'].data.cpu().numpy()
 
         return clipwise_output, embedding
-
-
-class SoundEventDetection(object):
-    def __init__(self, model=None, checkpoint_path=None,checkpoint_model=None, device='cuda', interpolate_mode='nearest'):
-        """Sound event detection inference wrapper.
-
-        Args:
-            model: None | nn.Module
-            checkpoint_path: str
-            device: str, 'cpu' | 'cuda'
-            interpolate_mode, 'nearest' |'linear'
-        """
-        if not checkpoint_path:
-            checkpoint_path=os.path.join("/content/drive/My Drive/SonART","saved_model", "panns", "Cnn14_DecisionLevelMax.pth")
-        print('Checkpoint path: {}'.format(checkpoint_path))
-
-
-        checkpoint_dir = os.path.dirname(checkpoint_path)  # Ottieni la directory del file
-
-        # Verifica se la cartella esiste, altrimenti la crea
-        if not os.path.exists(checkpoint_dir):
-            print(f"🔄 La cartella non esiste. Creando la cartella: {checkpoint_dir}")
-            os.makedirs(checkpoint_dir, exist_ok=True)
-        else:
-            print(f"✅ La cartella esiste già: {checkpoint_dir}")
-            
-        # Procedi con il download
-        if not os.path.exists(checkpoint_path) or os.path.getsize(checkpoint_path) < 3e8:
-            print("⚠️ File non trovato o corrotto. Scarico il modello...")
-            
-            zenodo_path = "https://zenodo.org/record/3987831/files/Cnn14_DecisionLevelMax_mAP%3D0.385.pth?download=1"
-
-            
-            # Scarica il modello
-            os.system(f'wget -O "{checkpoint_path}" "{zenodo_path}"')
-
-            # Controlla la dimensione del file
-            if os.path.exists(checkpoint_path):
-                file_size = os.path.getsize(checkpoint_path) / (1024 * 1024)  # Converti in MB
-                if file_size < 300:
-                    print(f"⚠️ Attenzione: il file è troppo piccolo ({file_size:.2f} MB), potrebbe essere corrotto!")
-                else:
-                    print(f"✅ File scaricato correttamente ({file_size:.2f} MB)")
-            else:
-                raise FileNotFoundError("❌ Errore: il file non è stato scaricato. Controlla la connessione.")
-        else:
-            print("✅ Il file esiste già, nessun download necessario.")
-
-        #if not os.path.exists(checkpoint_path) or os.path.getsize(checkpoint_path) < 3e8:
-            #create_folder(os.path.dirname(checkpoint_path))
-            #os.system('wget -O "{}" https://zenodo.org/record/3987831/files/Cnn14_DecisionLevelMax_mAP%3D0.385.pth?download=1'.format(checkpoint_path))
-
-        if device == 'cuda' and torch.cuda.is_available():
-            self.device = 'cuda'
-        else:
-            self.device = 'cpu'
-        
-        self.labels = labels
-        self.classes_num = classes_num
-
-        # Model
-        if model is None:
-            self.model = Cnn14_DecisionLevelMax(sample_rate=32000, window_size=1024, 
-                hop_size=320, mel_bins=64, fmin=50, fmax=14000, 
-                classes_num=self.classes_num, interpolate_mode=interpolate_mode)
-
-            checkpoint = torch.load(checkpoint_path, map_location=self.device)
-            self.model.load_state_dict(checkpoint['model'])
-
-            if checkpoint_model is None:
-                checkpoint_model = os.path.join("/content/drive/My Drive/SonART","saved_model", "panns", "panns_model_event_det.pth")
-
-            print('Checkpoint model: {}'.format(checkpoint_model))
-
-            torch.save(self.model, checkpoint_model)
-            print(f"💾 Modello istanziato salvato su Drive: /content/drive/My Drive/SonART/saved_model/panns/panns_model_event_det.pth")
-        else:
-            self.model = model
-            print("Il modello esiste già!")
-        
-
-        # Parallel
-        if 'cuda' in str(self.device):
-            self.model.to(self.device)
-            print('GPU number: {}'.format(torch.cuda.device_count()))
-            self.model = torch.nn.DataParallel(self.model)
-        else:
-            print('Using CPU.')
-
-    def inference(self, audio):
-        audio = move_data_to_device(audio, self.device)
-
-        with torch.no_grad():
-            self.model.eval()
-            output_dict = self.model(
-                input=audio, 
-                mixup_lambda=None
-            )
-
-        framewise_output = output_dict['framewise_output'].data.cpu().numpy()
-
-        return framewise_output
