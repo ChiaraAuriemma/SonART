@@ -21,9 +21,9 @@
 
 
 ## Description:
-SonART is an application designed to help artists with limited resources bring their performances to life, enhancing them through an original technology.
+SonART is an application designed to help people with limited resources bring their performances to life, enhancing them through an original technology.
 
-The artist can upload an audio track they intend to use during their performance, and SonART will classify the sounds it contains and transform them into images that are always unique, thanks to the generative AI. These visuals will appear on screen in sync with the sounds they represent. To make the experience even more visually engaging, a custom Processing script modifies the images to give them a unique artistic flair. The user experience is simplified through a built-in GUI within the notebook, guiding users through the file upload and processing steps. The GUI also allows customization of certain parameters to improve the final result.
+The user can upload an audio track they intend to use during their performance, and SonART will classify the sounds it contains and transform them into images that are always unique, thanks to the generative AI. These visuals will appear on screen in sync with the sounds they represent. To make the experience even more visually engaging, a custom Processing script modifies the images to give them a unique artistic flair. The user experience is simplified through a built-in GUI within the notebook, guiding users through the file upload and processing steps. The GUI also allows customization of certain parameters to improve the final result.
 
 <details>
 <summary>read more</summary>
