@@ -32,7 +32,16 @@ To use the application, you need to set up your Google Drive. This operation onl
 
 1. Upload the SonART_setup folder from the repository to your Google Drive.
 
-### ngrok setup:
+### ngrok setup: 
+Since Google Colab cannot directly access local servers due to network restrictions, ngrok acts as a secure tunnel that bridges our Processing sketch, running locally, to the Colab notebook. 
+1. Go to https://ngrok.com/download and download the version for your operating system.
+2. Sign up at https://dashboard.ngrok.com/signup and log in. You’ll be asked to provide a credit card number for identity verification purposes, but don’t worry — the service is completely free.
+3. Search for your Authtoken in your dashboard, andy copy it.
+4. Configure ngrok by running the following in your terminal: ngrok config add-authtoken YOUR_AUTHTOKEN 
+5. Start a tunnel by running: ngrok http 1234
+6. You’ll see a public URL like https://xxxx.ngrok.io that forwards to your local service.
+
+NOTA : l'ultimo punto è da rivedere perchè aggiungendo la parte automatica lo fa da solo. 
 
 ### Use the application:
 1. Open the file SonART_code.ipynb on Google Colab.
