@@ -8,6 +8,17 @@
     <img src="deliveries/Logo2.png" alt="alt text">
 </p>
 
+## Table of Contents
+
+- [Group](#group)
+- [Description](#description)
+- [How to use](#how-to-use)
+  - [Google Drive setup](#google-drive-setup)
+  - [ngrok setup](#ngrok-setup)
+  - [Use the application](#use-the-application)
+  - [Some additional tips](#some-additional-tips)
+- [References](#references)
+
 ## Group:
 
 - ####  Chiara Auriemma &nbsp;([@ChiaraAuriemma](https://github.com/ChiaraAuriemma))<br> 10722613&nbsp;&nbsp; chiara.auriemma@mail.polimi.it
@@ -15,16 +26,22 @@
 - ####  Anna Fusari &nbsp;([@AnnaFusari](https://github.com/AnnaFusari))<br> 10561236&nbsp;&nbsp; anna.fusari@mail.polimi.it
 - ####  Diego Pini &nbsp;([@DiegoPini](https://github.com/DiegoPini))<br> 10668724&nbsp;&nbsp; diego.pini@mail.polimi.it
 
+
 ## Description:
 SonART is an application designed to help artists with limited resources bring their performances to life, enhancing them through an original technology.
 
 The artist can upload an audio track they intend to use during their performance, and SonART will classify the sounds it contains and transform them into images that are always unique, thanks to the generative AI. These visuals will appear on screen in sync with the sounds they represent. To make the experience even more visually engaging, a custom Processing script modifies the images to give them a unique artistic flair. The user experience is simplified through a built-in GUI within the notebook, guiding users through the file upload and processing steps. The GUI also allows customization of certain parameters to improve the final result.
 
+<details>
+<summary>read more</summary>
+  
 While the application works also with musical tracks and instruments, it is primarily designed to accompany theatrical performances, where environmental or narrative-driven sounds are used. In this context, SonART generates dynamic visual backdrops. This is one of the system’s key features, distinguishing it from other applications that are mainly intended to accompany musical performances.
 
 Although this was the original concept that inspired the project, SonART also lends itself to more playful or educational purposes: “Aren’t you curious to see how that track will be transformed?” It can help children associate sounds with images in a fun way, enhance storytelling during a Dungeons & Dragons session by preparing sounds and letting SonART handle the visuals, or even make performances more inclusive for the hearing impaired. You can also use it during relaxation sessions, pairing nature sounds with beautiful, evolving imagery.
 
 In short, the only limit is your creativity.
+
+</details>
 
 ## How to use:
 ### Google Drive setup:
@@ -53,6 +70,9 @@ NOTA : l'ultimo punto è da rivedere perchè aggiungendo la parte automatica lo 
 7. Use the Play button in the GUI.
 
 ### Some additional tips:
+<details>
+<summary>read more</summary>
+  
 - The application allows you to upload and process in advance all the files you need for your performance. Our advice is to prepare them all beforehand and then play them in the order you prefer using the play button.
 - During the processing of an audio file, the identified classes, the probability assigned to each class by the classifier, and the timestamps will be printed on screen. The generated images can be viewed through the Colab file system.
 - If you don't like the results obtained, you can always delete them through the GUI and try again with different parameters.
@@ -60,6 +80,9 @@ NOTA : l'ultimo punto è da rivedere perchè aggiungendo la parte automatica lo 
 - You can also choose to use the threshold parameter. The idea is that if you set a high threshold, you'll get fewer labels in the output, with the risk of having no output in certain segments — but the results you do get will be more stable and reliable. With a low threshold, the opposite happens: the system becomes more responsive but less accurate.
 - Remember to include background and style to customize the generated images.
 - If you notice that it takes a bit of time to run the cells in 'Run for setup', don’t worry! That’s perfectly normal, especially the very first time you try the application, as the audio model needs to be created from scratch and loaded onto your drive. You’ll see that next time, the code will run much faster.
+
+</details>
+
 
 ## References:
 ### Audio part:
