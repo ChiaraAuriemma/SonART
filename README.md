@@ -54,6 +54,7 @@ NOTA : l'ultimo punto è da rivedere perchè aggiungendo la parte automatica lo 
 
 ### Some additional tips:
 - The application allows you to upload and process in advance all the files you need for your performance. Our advice is to prepare them all beforehand and then play them in the order you prefer using the play button.
+- During the processing of an audio file, the identified classes, the probability assigned to each class by the classifier, and the timestamps will be printed on screen. The generated images can be viewed through the Colab file system.
 - If you don't like the results obtained, you can always delete them through the GUI and try again with different parameters.
 - To improve the results, you have the option to ban certain labels in order to encourage the recognition of more specific ones.
 - You can also choose to use the threshold parameter. The idea is that if you set a high threshold, you'll get fewer labels in the output, with the risk of having no output in certain segments — but the results you do get will be more stable and reliable. With a low threshold, the opposite happens: the system becomes more responsive but less accurate.
