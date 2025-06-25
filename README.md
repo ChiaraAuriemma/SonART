@@ -37,19 +37,28 @@ Since Google Colab cannot directly access local servers due to network restricti
 1. Go to https://ngrok.com/download and download the version for your operating system.
 2. Sign up at https://dashboard.ngrok.com/signup and log in. You’ll be asked to provide a credit card number for identity verification purposes, but don’t worry — the service is completely free.
 3. Search for your Authtoken in your dashboard, andy copy it.
-4. Configure ngrok by running the following in your terminal: ngrok config add-authtoken YOUR_AUTHTOKEN 
-5. Start a tunnel by running: ngrok http 1234
-6. You’ll see a public URL like https://xxxx.ngrok.io that forwards to your local service.
+4. Configure ngrok by running the following in your terminal: ngrok config add-authtoken YOUR_AUTHTOKEN
+6. Start a tunnel by running: ngrok http 1234
+7. You’ll see a public URL like https://xxxx.ngrok.io that forwards to your local service.
 
 NOTA : l'ultimo punto è da rivedere perchè aggiungendo la parte automatica lo fa da solo. 
 
 ### Use the application:
 1. Open the file SonART_code.ipynb on Google Colab.
 2. In the Processing connection section, enter the address and port.
-3. Run all the cells in the "Run for setup" and "GUI" sections.
-4. Upload an audio file through the GUI.
-5. Open the Processing script and run it.
-6. Use the Play button in the GUI.
+3. Run all the cells in the "Run for setup" section.
+4. You will be asked to grant access to Google Drive, please authorize it.
+5. Run the "GUI" section and upload an audio file through the GUI.
+6. Open the Processing script and run it.
+7. Use the Play button in the GUI.
+
+### Some additional tips
+- The application allows you to upload and process in advance all the files you need for your performance. Our advice is to prepare them all beforehand and then play them in the order you prefer using the play button.
+- If you don't like the results obtained, you can always delete them through the GUI and try again with different parameters.
+- To improve the results, you have the option to ban certain labels in order to encourage the recognition of more specific ones.
+- You can also choose to use the threshold parameter. The idea is that if you set a high threshold, you'll get fewer labels in the output, with the risk of having no output in certain segments — but the results you do get will be more stable and reliable. With a low threshold, the opposite happens: the system becomes more responsive but less accurate.
+- Remember to include background and style to customize the generated images.
+- If you notice that it takes a bit of time to run the cells in 'Run for setup', don’t worry! That’s perfectly normal, especially the very first time you try the application, as the audio model needs to be created from scratch and loaded onto your drive. You’ll see that next time, the code will run much faster.
 
 ## References:
 ### Audio part:
