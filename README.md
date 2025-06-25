@@ -37,14 +37,14 @@ In short, the only limit is your creativity.
 </details>
 
 ## How to use:
-### 📂 Google Drive setup:
+#### 📂 Google Drive setup:
 To use the application, you need to set up your Google Drive. This operation only needs to be done once, and after that, you’ll be ready to use the application anytime you want:
 
 1. Upload the SonART_setup folder from the repository to your Google Drive.
 
 ---
 
-### 🌐 ngrok setup: 
+#### 🌐 ngrok setup: 
 Since Google Colab cannot directly access local servers due to network restrictions, ngrok acts as a secure tunnel that bridges our Processing sketch, running locally, to the Colab notebook. 
 1. Go to https://ngrok.com/download and download the version for your operating system.
 2. Sign up at https://dashboard.ngrok.com/signup and log in. You’ll be asked to provide a credit card number for identity verification purposes, but don’t worry — the service is completely free.
@@ -57,7 +57,7 @@ NOTA : l'ultimo punto è da rivedere perchè aggiungendo la parte automatica lo 
 
 ---
 
-### 🎛️ Use the application:
+#### 🎛️ Use the application:
 1. Open the file SonART_code.ipynb on Google Colab.
 2. In the Processing connection section, enter the address and port.
 3. Run all the cells in the "Run for setup" section.
@@ -68,7 +68,7 @@ NOTA : l'ultimo punto è da rivedere perchè aggiungendo la parte automatica lo 
 
 ----
 
-### 🧠 Some additional tips:
+#### 🧠 Some additional tips:
 <details>
 <summary>read more</summary>
   
@@ -84,11 +84,11 @@ NOTA : l'ultimo punto è da rivedere perchè aggiungendo la parte automatica lo 
 
 
 ## References:
-### Audio part:
+#### Audio part:
 - Qiuqiang Kong, Yin Cao, Turab Iqbal, Yuxuan Wang, Wenwu Wang, Mark D. Plumbley. "PANNs: Large-Scale Pretrained Audio Neural Networks for Audio Pattern Recognition." arXiv preprint arXiv:1912.10211 (2019)
 - https://github.com/qiuqiangkong/panns_inference/tree/master
 - https://github.com/qiuqiangkong/audioset_tagging_cnn?tab=readme-ov-file
 - https://github.com/yinkalario/Sound-Event-Detection-AudioSet/tree/master
 
-### Images part:
+#### Images part:
 - https://huggingface.co/latent-consistency/lcm-lora-sdxl
