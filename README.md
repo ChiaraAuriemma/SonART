@@ -30,11 +30,7 @@ In short, the only limit is your creativity.
 ### Google Drive setup:
 To use the application, you need to set up your Google Drive. This operation only needs to be done once, and after that, you’ll be ready to use the application anytime you want:
 
-1. In your Google Drive, create a folder named SonART.
-2. Inside the SonART folder, create a subfolder named Code.
-3. In the Code folder, upload the panns-inference folder found in the repository.
-4. Create a folder named saved_model.
-5. Upload the files filterable_labels.json and labels_config.json (both available in the repository) into the SonART folder.
+1. Upload the SonART_setup folder from the repository to your Google Drive.
 
 ### ngrok setup:
 
