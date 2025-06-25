@@ -8,17 +8,6 @@
   <img src="deliveries/Logo2.png" alt="SonART logo" width="600">
 </p>
 
-## Table of Contents
-
-- [Group](#group)
-- [Description](#description)
-- [How to use](#how-to-use)
-  - [Google Drive setup](#google-drive-setup)
-  - [ngrok setup](#ngrok-setup)
-  - [Use the application](#use-the-application)
-  - [Some additional tips](#some-additional-tips)
-- [References](#references)
-
 
 ## Group
 
@@ -48,12 +37,14 @@ In short, the only limit is your creativity.
 </details>
 
 ## How to use:
-### Google Drive setup:
+### 📂 Google Drive setup:
 To use the application, you need to set up your Google Drive. This operation only needs to be done once, and after that, you’ll be ready to use the application anytime you want:
 
 1. Upload the SonART_setup folder from the repository to your Google Drive.
 
-### ngrok setup: 
+---
+
+### 🌐 ngrok setup: 
 Since Google Colab cannot directly access local servers due to network restrictions, ngrok acts as a secure tunnel that bridges our Processing sketch, running locally, to the Colab notebook. 
 1. Go to https://ngrok.com/download and download the version for your operating system.
 2. Sign up at https://dashboard.ngrok.com/signup and log in. You’ll be asked to provide a credit card number for identity verification purposes, but don’t worry — the service is completely free.
@@ -64,7 +55,9 @@ Since Google Colab cannot directly access local servers due to network restricti
 
 NOTA : l'ultimo punto è da rivedere perchè aggiungendo la parte automatica lo fa da solo. 
 
-### Use the application:
+---
+
+### 🎛️ Use the application:
 1. Open the file SonART_code.ipynb on Google Colab.
 2. In the Processing connection section, enter the address and port.
 3. Run all the cells in the "Run for setup" section.
@@ -73,7 +66,9 @@ NOTA : l'ultimo punto è da rivedere perchè aggiungendo la parte automatica lo 
 6. Open the Processing script and run it.
 7. Use the Play button in the GUI.
 
-### Some additional tips:
+----
+
+### 🧠 Some additional tips:
 <details>
 <summary>read more</summary>
   
