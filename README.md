@@ -53,5 +53,5 @@ To use the application, you need to set up your Google Drive. This operation onl
 - https://github.com/qiuqiangkong/audioset_tagging_cnn?tab=readme-ov-file
 - https://github.com/yinkalario/Sound-Event-Detection-AudioSet/tree/master
 
-### Image part:
+### Images part:
 - https://huggingface.co/latent-consistency/lcm-lora-sdxl
