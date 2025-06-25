@@ -52,7 +52,7 @@ NOTA : l'ultimo punto è da rivedere perchè aggiungendo la parte automatica lo 
 6. Open the Processing script and run it.
 7. Use the Play button in the GUI.
 
-### Some additional tips
+### Some additional tips:
 - The application allows you to upload and process in advance all the files you need for your performance. Our advice is to prepare them all beforehand and then play them in the order you prefer using the play button.
 - If you don't like the results obtained, you can always delete them through the GUI and try again with different parameters.
 - To improve the results, you have the option to ban certain labels in order to encourage the recognition of more specific ones.
