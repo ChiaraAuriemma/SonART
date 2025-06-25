@@ -28,7 +28,7 @@ class AudioTagging(object):
         """Audio tagging inference wrapper.
         """
         if not checkpoint_path:
-            checkpoint_path = os.path.join("/content/drive/My Drive/SonART","saved_model", "panns", "Cnn14_mAP=0.431.pth")
+            checkpoint_path = os.path.join("/content/drive/My Drive/SonART_setup","saved_model", "Cnn14_mAP=0.431.pth")
         print('Checkpoint path: {}'.format(checkpoint_path))
 
             
@@ -47,6 +47,7 @@ class AudioTagging(object):
                 file_size = os.path.getsize(checkpoint_path) / (1024 * 1024)  
                 if file_size < 300:
                     print(f"⚠️ Warning: the file is too small ({file_size:.2f} MB), it might be corrupted!")
+                    raise FileNotFoundError("❌ Error: File not downloaded. Check your connection.")
                 else:
                     print(f"✅ File downloaded successfully ({file_size:.2f} MB)")
             else:
@@ -66,7 +67,7 @@ class AudioTagging(object):
 
         # Set default path if checkpoint_model not provided
         if checkpoint_model is None:
-            checkpoint_model = os.path.join("/content/drive/My Drive/SonART","saved_model", "panns", "panns_model.pth")
+            checkpoint_model = os.path.join("/content/drive/My Drive/SonART_setup","saved_model", "panns_model.pth")
             print('Checkpoint model: {}'.format(checkpoint_model))
 
         # Model
