@@ -55,12 +55,14 @@ NOTA : l'ultimo punto è da rivedere perchè aggiungendo la parte automatica lo 
 
 #### 🎛️ Use the application:
 1. Open the file SonART_code.ipynb on Google Colab.
-2. In the Processing connection section, enter the address and port.
-3. Run all the cells in the "Run for setup" section.
-4. You will be asked to grant access to Google Drive, please authorize it.
-5. Run the "GUI" section and upload an audio file through the GUI.
-6. Open the Processing script and run it.
-7. Use the Play button in the GUI.
+2. On Colab make sure you are using the GPU.
+3. In the Processing connection section, enter the address and port.
+4. Run all the cells in the "Run for setup" section.
+5. You will be asked to grant access to Google Drive, please authorize it.
+6. Run the "GUI" section and upload an audio file through the GUI.
+7. Open the Processing script and run it.
+8. Use the Play button in the GUI.
+9. Enjoy!
 
 ----
 
