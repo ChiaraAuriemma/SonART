@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="deliveries/Logo2.png" alt="SonART logo" width="600">
+  <img src="deliveries/Logo.jpg" alt="SonART logo" width="600">
 </p>
 
 
