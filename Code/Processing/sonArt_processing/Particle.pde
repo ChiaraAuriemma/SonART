@@ -14,9 +14,9 @@ class Particle {
     currentColor = c;
     nextColor = c;
     angle = random(TWO_PI);
-    waveAmplitude = random(5, 15);
+    waveAmplitude = random(5, 20);
     waveFrequency = random(0.03, 0.08);
-    particleSize = random(10, 25);
+    particleSize = random(10, 30);
   }
 
   void setNext(float nx, float ny, color nc) {
@@ -25,19 +25,22 @@ class Particle {
     nextColor = nc;
   }
 
-  void update(boolean transitioning, float progress, float dt) {
+void update(boolean transitioning, float progress, float dt) {
     if (transitioning) {
-      float eased = ease(progress); 
+      float eased = ease(progress);
       float decay = 1.0 - eased;
 
+      // usa startX/startY fissi come punto di partenza
       x = lerp(x, tx, eased);
       y = lerp(y, ty, eased);
 
       x += sin(angle) * waveAmplitude * decay * dt * 30;
       y += cos(angle) * waveAmplitude * decay * dt * 30;
 
-      angle += waveFrequency * dt * 30;
+      angle += waveFrequency * dt * 60;
+
       currentColor = lerpColor(currentColor, nextColor, eased);
+
     } else {
       x += sin(angle) * 0.3 * dt * 10;
       y += cos(angle) * 0.3 * dt * 10;
