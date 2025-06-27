@@ -1,5 +1,204 @@
 {
   "groups": {
+    "People that speak": [
+    "Speech"
+    ],
+    "People that speak (male)": [
+        "Male speech, man speaking"
+    ],
+    "People that speak (female)": [
+        "Female speech, woman speaking"
+    ],
+    "People that speak (children)": [
+        "Child speech, kid speaking"
+    ],
+    "People that converse": [
+        "Conversation"
+    ],
+    "People that narrate": [
+        "Narration, monologue"
+    ],
+    "People that babble": [
+        "Babbling"
+    ],
+    "People that use speech synthesizers": [
+        "Speech synthesizer"
+    ],
+    "People that shout": [
+        "Shout"
+    ],
+    "People that whoop": [
+        "Whoop"
+    ],
+    "People that yell": [
+        "Yell"
+    ],
+    "People that make battle cries": [
+        "Battle cry"
+    ],
+    "Children that shout": [
+        "Children shouting"
+    ],
+    "People that scream": [
+        "Screaming"
+    ],
+    "People that whisper": [
+        "Whispering"
+    ],
+    "People that laugh": [
+        "Laughter"
+    ],
+    "Babies that laugh": [
+        "Baby laughter"
+    ],
+    "People that giggle": [
+        "Giggle"
+    ],
+    "People that snicker": [
+        "Snicker"
+    ],
+    "People that belly laugh": [
+        "Belly laugh"
+    ],
+    "People that chuckle": [
+        "Chuckle, chortle"
+    ],
+    "People that cry": [
+        "Crying, sobbing"
+    ],
+    "Babies that cry": [
+        "Baby cry, infant cry"
+    ],
+    "People that whimper": [
+        "Whimper"
+    ],
+    "People that wail": [
+        "Wail, moan"
+    ],
+    "People that sigh": [
+        "Sigh"
+    ],
+    "People that sing": [
+        "Singing"
+    ],
+    "People that sing in choir": [
+        "Choir"
+    ],
+    "People that yodel": [
+        "Yodeling"
+    ],
+    "People that chant": [
+        "Chant"
+    ],
+    "People that recite mantras": [
+        "Mantra"
+    ],
+    "People that sing (male)": [
+        "Male singing"
+    ],
+    "People that sing (female)": [
+        "Female singing"
+    ],
+    "Children that sing": [
+        "Child singing"
+    ],
+    "People that rap": [
+        "Rapping"
+    ],
+    "People that hum": [
+        "Humming"
+    ],
+    "People that groan": [
+        "Groan"
+    ],
+    "People that grunt": [
+        "Grunt"
+    ],
+    "People that whistle": [
+        "Whistling"
+    ],
+    "People that breathe": [
+        "Breathing"
+    ],
+    "People that wheeze": [
+        "Wheeze"
+    ],
+    "People that snore": [
+        "Snoring"
+    ],
+    "People that gasp": [
+        "Gasp"
+    ],
+    "People that pant": [
+        "Pant"
+    ],
+    "People that snort": [
+        "Snort"
+    ],
+    "People that cough": [
+        "Cough"
+    ],
+    "People that clear their throat": [
+        "Throat clearing"
+    ],
+    "People that sneeze": [
+        "Sneeze"
+    ],
+    "People that sniff": [
+        "Sniff"
+    ],
+    "People that run": [
+        "Run"
+    ],
+    "People that shuffle": [
+        "Shuffle"
+    ],
+    "People that walk": [
+        "Walk, footsteps"
+    ],
+    "People that chew": [
+        "Chewing, mastication"
+    ],
+    "People that bite": [
+        "Biting"
+    ],
+    "People that gargle": [
+        "Gargling"
+    ],
+    "People with stomach rumbles": [
+        "Stomach rumble"
+    ],
+    "People that burp": [
+        "Burping, eructation"
+    ],
+    "People that hiccup": [
+        "Hiccup"
+    ],
+    "People that fart": [
+        "Fart"
+    ],
+    "People that snap fingers": [
+        "Finger snapping"
+    ],
+    "People that clap": [
+        "Clapping"
+    ],
+    "People that cheer": [
+        "Cheering"
+    ],
+    "People that applaud": [
+        "Applause"
+    ],
+    "People that chatter": [
+        "Chatter"
+    ],
+    "People in crowds": [
+        "Crowd"
+    ],
+    "People making speech noise": [
+        "Hubbub, speech noise, speech babble"
+    ],
+
     "Man speaking": [
       "Male speech, man speaking"
     ],
