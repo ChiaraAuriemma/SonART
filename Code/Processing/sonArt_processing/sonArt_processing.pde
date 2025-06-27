@@ -38,7 +38,7 @@ boolean audioReady = false;
 boolean audioStarted = false;
 
 void setup() {
-  fullScreen(P2D);
+  fullScreen(P2D, 2);
   smooth();
   frameRate(60);
 
@@ -128,56 +128,89 @@ void draw() {
   }
 
   synchronized(processedImages) {
-    // Se non c'è immagine corrente e abbiamo immagini da mostrare (prima immagine)
-    if (currentImage == null && !processedImages.isEmpty()) {
-      ScheduledImage first = processedImages.get(0);
-      int transitionDurationFirst = first.timestamp / 3; // 30% della durata totale
-      int transitionStartThresholdFirst = first.timestamp - transitionDurationFirst;
+  // Se non c'è immagine corrente e abbiamo immagini da mostrare (prima immagine)
+  if (currentImage == null && !processedImages.isEmpty()) {
+    ScheduledImage first = processedImages.get(0);
 
-      if (!transitioning && virtualTime >= transitionStartThresholdFirst) {
-        transitioning = true;
-        transitionStartTime = transitionStartThresholdFirst;  // assegnazione una tantum
-        transitionDuration = transitionDurationFirst;         // assegnazione una tantum
-        // Non rimuoviamo la prima immagine dalla lista, la lasciamo per sicurezza
-        pendingColors = first.precomputedColors;
-        readyForAssign = true;
-        currentImage = first;
-        transitionProgress = 0;
-        println("[DEBUG] Inizio transizione PRIMA immagine a virtualTime=" + virtualTime + " ms, timestamp=" + first.timestamp);
-      }
-    } 
-    // Transizioni successive
-    else if (!transitioning && !processedImages.isEmpty() && currentImage != null) {
-      ScheduledImage next = processedImages.get(0);
-      int interval = next.timestamp - currentImage.timestamp;
-      int transitionDurationNext = (int)(interval * 0.3f);
-      int transitionStartThreshold = next.timestamp - transitionDurationNext;
+    // Assicuriamoci che il timestamp minimo sia almeno 500 ms per evitare problemi
+    int safeTimestamp = max(first.timestamp, 500);
 
-      if (virtualTime >= transitionStartThreshold) {
-        transitioning = true;
-        transitionStartTime = transitionStartThreshold;  // assegnazione una tantum
-        transitionDuration = transitionDurationNext;     // assegnazione una tantum
-        processedImages.remove(0);  // rimuove immagine già in transizione
-        pendingColors = next.precomputedColors;
-        readyForAssign = true;
-        currentImage = next;
-        transitionProgress = 0;
-        println("[DEBUG] Inizio transizione a virtualTime=" + virtualTime + " ms, timestamp=" + next.timestamp);
-      }
+    int transitionDurationFirst = safeTimestamp / 3; // 30% della durata totale
+    int transitionStartThresholdFirst = safeTimestamp - transitionDurationFirst;
+
+    if (!transitioning && virtualTime >= transitionStartThresholdFirst) {
+      transitioning = true;
+
+      transitionStartTime = transitionStartThresholdFirst;  // uso virtualTime coerente
+      transitionDuration = transitionDurationFirst;
+
+      // NON rimuoviamo la prima immagine dalla lista, la lasciamo per sicurezza
+      pendingColors = first.precomputedColors;
+      readyForAssign = true;
+      currentImage = first;
+      transitionProgress = 0;
+
+      println("[DEBUG] Inizio transizione PRIMA immagine a virtualTime=" + virtualTime + " ms, timestamp=" + first.timestamp);
+    }
+  } 
+  // Transizioni successive
+  else if (!transitioning && !processedImages.isEmpty() && currentImage != null) {
+    ScheduledImage next = processedImages.get(0);
+    int interval = next.timestamp - currentImage.timestamp;
+
+    if (interval <= 0) {
+      println("[WARN] Interval nullo o negativo, rimuovo immagine corrotta");
+      processedImages.remove(0);
+      return;
+    }
+
+    int transitionDurationNext = (int)(interval * 0.3f);
+    int transitionStartThreshold = next.timestamp - transitionDurationNext;
+
+    if (virtualTime >= transitionStartThreshold) {
+      transitioning = true;
+
+      transitionStartTime = transitionStartThreshold;
+      transitionDuration = transitionDurationNext;
+
+      processedImages.remove(0);  // rimuove immagine già in transizione
+      pendingColors = next.precomputedColors;
+
+      readyForAssign = true;
+      currentImage = next;
+      transitionProgress = 0;
+
+      println("[DEBUG] Inizio transizione a virtualTime=" + virtualTime + " ms, timestamp=" + next.timestamp);
     }
   }
+}
+
 
   // Aggiorna il progresso della transizione
+  
   if (transitioning) {
-    int elapsed = virtualTime - transitionStartTime;
-    transitionProgress = constrain((float) elapsed / transitionDuration, 0, 1);
-
-    if (virtualTime >= currentImage.timestamp) {
+    transitionProgress += dt / (transitionDuration / 1000.0);  // dt è in secondi, duration in ms
+    transitionProgress = constrain(transitionProgress, 0, 1);
+  
+    if (transitionProgress >= 1) {
       transitioning = false;
-      transitionProgress = 1.0f;
+      
       println("[DEBUG] Fine transizione a virtualTime=" + virtualTime + " ms, timestamp=" + currentImage.timestamp);
     }
   }
+  /*
+  if (transitioning) {
+    int timetoend = currentImage.timestamp - virtualTime;
+    int totalTransitionTime = currentImage.timestamp - transitionStartTime;
+    if(totalTransitionTime > 0){
+      transitionProgress = 1.0f - ((float)timetoend/(float)totalTransitionTime);
+      transitionProgress = constrain(transitionProgress, 0, 1);
+    }
+    if(virtualTime >= currentImage.timestamp){
+      transitioning = false;
+      transitionProgress = 1.0f;
+    }
+  }*/
 
   // Applica i nuovi colori alle particelle se pronti
   if (readyForAssign) {

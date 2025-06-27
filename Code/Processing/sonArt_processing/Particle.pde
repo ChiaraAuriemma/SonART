@@ -10,13 +10,13 @@ class Particle {
     this.x = x;
     this.y = y;
     this.tx = x;
-    this.ty = y;
+    this.ty = y;'
     currentColor = c;
     nextColor = c;
     angle = random(TWO_PI);
     waveAmplitude = random(5, 20);
     waveFrequency = random(0.03, 0.08);
-    particleSize = random(10, 30);
+    particleSize = random(10, 25);
   }
 
   void setNext(float nx, float ny, color nc) {
@@ -30,9 +30,9 @@ void update(boolean transitioning, float progress, float dt) {
       float eased = ease(progress);
       float decay = 1.0 - eased;
 
-      // usa startX/startY fissi come punto di partenza
-      x = lerp(x, tx, eased);
-      y = lerp(y, ty, eased);
+      
+      x = lerp(x, tx, progress*0.1);
+      y = lerp(y, ty, progress*0.1);
 
       x += sin(angle) * waveAmplitude * decay * dt * 30;
       y += cos(angle) * waveAmplitude * decay * dt * 30;
@@ -46,7 +46,7 @@ void update(boolean transitioning, float progress, float dt) {
       y += cos(angle) * 0.3 * dt * 10;
       angle += waveFrequency * dt * 30;
     }
-  }
+ }
 
   void display() {
     pushMatrix();
