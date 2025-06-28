@@ -46,23 +46,21 @@ Since Google Colab cannot directly access local servers due to network restricti
 2. Sign up at https://dashboard.ngrok.com/signup and log in. You’ll be asked to provide a credit card number for identity verification purposes, but don’t worry — the service is completely free.
 3. Search for your Authtoken in your dashboard, andy copy it.
 4. Configure ngrok by running the following in your terminal: ngrok config add-authtoken YOUR_AUTHTOKEN
-6. Start a tunnel by running: ngrok http 1234
-7. You’ll see a public URL like https://xxxx.ngrok.io that forwards to your local service.
-
-NOTA : l'ultimo punto è da rivedere perchè aggiungendo la parte automatica lo fa da solo. 
 
 ---
 
 #### 🎛️ Use the application:
-1. Open the file SonART_code.ipynb on Google Colab.
-2. On Colab make sure you are using the GPU.
-3. In the Processing connection section, enter the address and port.
-4. Run all the cells in the "Run for setup" section.
-5. You will be asked to grant access to Google Drive, please authorize it.
-6. Run the "GUI" section and upload an audio file through the GUI.
-7. Open the Processing script and run it.
-8. Use the Play button in the GUI.
-9. Enjoy!
+1. Start a tunnel by running : ngrok http 1234
+2. You’ll see a public URL like https://xxxx.ngrok.io that forwards to your local service.
+3. Open the file SonART_code.ipynb on Google Colab.
+4. In the Processing connection section, enter the address and port.
+5. On Colab make sure you are using the GPU.
+6. Run all the cells in notebook
+7. You will be asked to grant access to Google Drive, please authorize it.
+8. Upload an audio file through the GUI
+9. Open the file SonART_processing.pde and run it.
+10. Use the Play button in the GUI.
+11. Enjoy!
 
 ----
 
