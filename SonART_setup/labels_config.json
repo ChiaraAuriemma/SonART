@@ -14,7 +14,7 @@
         "Female speech, woman speaking"
     ],
     "People that speak (children)": [
-        "Child speech, kid speaking"
+        "Child speech, kid xng"
     ],
     "People that converse": [
         "Conversation"
@@ -201,16 +201,6 @@
     ],
     "People making speech noise": [
         "Hubbub, speech noise, speech babble"
-    ],
-
-    "Man speaking": [
-      "Male speech, man speaking"
-    ],
-    "Female speaking": [
-      "Female speech, woman speaking"
-    ],
-    "Child speaking": [
-      "Child speech, child speaking"
     ],
     "Pig": [
       "Oink"
