@@ -5,6 +5,7 @@ import java.io.*;
 import java.net.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
 
 PImage[] imgs;
 int cols, rows;
@@ -33,9 +34,11 @@ float lastTime = 0;
 
 Minim minim;
 AudioPlayer player;
+Clip clip; 
 
 boolean audioReady = false;
 boolean audioStarted = false;
+
 
 void setup() {
   fullScreen(P2D, 2);
@@ -89,10 +92,18 @@ void setup() {
         audioReady = true;
         println("[DEBUG] Audio pronto per la riproduzione");
       }
+      if (tcpReceiver.clip != null && !audioReady){
+        clip = tcpReceiver.clip;
+        audioReady = true;
+        println("[DEBUG] Audio pronto per la riproduzione");
+      }
+      
       delay(100);
     }
   }).start();
 }
+
+
 
 void draw() {
   background(255, 255, 255, 10);
@@ -106,9 +117,16 @@ void draw() {
     synchronized(processedImages) {
       if (!processedImages.isEmpty() && audioReady && !audioStarted) {
         startTime = millis();  // inizio ora
-        player.play();
-        audioStarted = true;
-        println("[DEBUG] Audio avviato, startTime = " + startTime);
+        if(tcpReceiver.extention == 0){
+          player.play();
+          audioStarted = true;
+          println("[DEBUG] Audio avviato, startTime = " + startTime);
+        }else{
+          clip.start();
+          audioStarted = true;
+          println("[DEBUG] Audio avviato, startTime = " + startTime);
+        }
+        
       }
     }
   }
@@ -120,7 +138,7 @@ void draw() {
     virtualTime = 0;
   }
 
-  println("[DEBUG] virtualTime = " + virtualTime);
+  //println("[DEBUG] virtualTime = " + virtualTime);
   synchronized(processedImages) {
     if (!processedImages.isEmpty()) {
       println("[DEBUG] Prossima immagine timestamp = " + processedImages.get(0).timestamp);
