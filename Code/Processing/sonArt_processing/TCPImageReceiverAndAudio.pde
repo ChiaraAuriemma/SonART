@@ -1,5 +1,3 @@
-
-
 class TCPImageReceiverAndAudio {
   ServerSocket server;
   final List<ScheduledImage> queue;

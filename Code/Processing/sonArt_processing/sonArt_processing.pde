@@ -1,38 +1,54 @@
-import ddf.minim.*;
+//--- IMPORT LIBRARIES ---
 import java.util.concurrent.*;
 import java.util.*;
 import java.io.*;
+//TCP connection
 import java.net.*;
+
+//image
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+
+//audio
+import ddf.minim.*;
 import javax.sound.sampled.*;
 
-PImage[] imgs;
+//--- SET VARIABLES --- 
+PImage[] imgs; 
 int cols, rows;
 int spacing = 9;
 
 Particle[][] particles;
 
-TCPImageReceiverAndAudio tcpReceiver;
+//TCP image/audio receiver from TCPImageReceiverAndAudio class
+TCPImageReceiverAndAudio tcpReceiver; 
+
 ExecutorService imageProcessor;
 
-List<ScheduledImage> processedImages;  // Lista sincronizzata per immagini processate
+//list of processed images
+List<ScheduledImage> processedImages;  
+
+//Currently displayed image
 ScheduledImage currentImage = null;
 
+ // Buffer for new particles color
 color[][] pendingColors;
-volatile boolean readyForAssign = false;
+volatile boolean readyForAssign = false; //new color availability
 
+//variable for time management
 int startTime = -1;
-int virtualTime = 0;
+int virtualTime = 0; //used for synch immages and audio
 
+//variable for transition management
 boolean transitioning = false;
 float transitionProgress = 0;
-float transitionDuration = 0;   // in milliseconds
-int transitionStartTime = 0;    // in milliseconds
+float transitionDuration = 0;   
+int transitionStartTime = 0;    
 
 float lastTime = 0;
 
-Minim minim;
+//file audio management 
+Minim minim; 
 AudioPlayer player;
 Clip clip; 
 
@@ -40,6 +56,7 @@ boolean audioReady = false;
 boolean audioStarted = false;
 
 
+//--- SETUP ---
 void setup() {
   fullScreen(P2D, 2);
   smooth();
@@ -49,34 +66,41 @@ void setup() {
 
   cols = width / spacing;
   rows = height / spacing;
-  println("Resolution: " + width + " x " + height + " => cols=" + cols + ", rows=" + rows);
-
+  
+  //Initialize Minim
   minim = new Minim(this);
+  
+  //Connection to TCP port
   tcpReceiver = new TCPImageReceiverAndAudio(12345, minim);
+  
+  //create Thread for image processor
   imageProcessor = Executors.newSingleThreadExecutor();
-
   processedImages = Collections.synchronizedList(new ArrayList<>());
-
+  
+  //creation a black particles image
   imgs = new PImage[10];
   imgs[0] = createImage(width, height, RGB);
   imgs[0].loadPixels();
   Arrays.fill(imgs[0].pixels, color(0));
   imgs[0].updatePixels();
-
+  
   particles = new Particle[cols][rows];
   initParticles(imgs[0]);
   pendingColors = new color[cols][rows];
-
-  // Thread che legge immagini da tcpReceiver, le elabora e salva in processedImages
+  
+  
+  // THREAD: Receive images from TCP and preprocess
   new Thread(() -> {
     while (true) {
       ScheduledImage img = tcpReceiver.nextImageBlocking();
       imageProcessor.submit(() -> {
         PImage scaled = img.img.copy();
         scaled.resize(width, height);
+        
         color[][] buffer = new color[cols][rows];
         extractColorsInto(scaled, buffer);
         img.precomputedColors = buffer;
+        
         synchronized(processedImages) {
           processedImages.add(img);
         }
@@ -84,7 +108,7 @@ void setup() {
     }
   }).start();
 
-  // Thread che controlla se audio è pronto
+  // THREAD: Wait until audio is ready
   new Thread(() -> {
     while (true) {
       if (tcpReceiver.player != null && !audioReady) {
@@ -98,110 +122,129 @@ void setup() {
         println("[DEBUG] Audio pronto per la riproduzione");
       }
       
-      delay(100);
+      delay(100); //avoid busy waiting 
     }
   }).start();
 }
 
 
-
+//--- DRAW ---
 void draw() {
   background(255, 255, 255, 10);
 
   float currentTime = millis() / 1000.0;
   float dt = currentTime - lastTime;
   lastTime = currentTime;
-
-  // Avvio audio e timer appena audio pronto e immagini pronte
+ 
+ 
+  //Audio start when it's ready and when the image queue is not empty 
   if (startTime < 0) {
     synchronized(processedImages) {
       if (!processedImages.isEmpty() && audioReady && !audioStarted) {
         startTime = millis();  // inizio ora
         if(tcpReceiver.extention == 0){
-          player.play();
+          player.play(); // Minim-based audio for MP£ file
           audioStarted = true;
           println("[DEBUG] Audio avviato, startTime = " + startTime);
         }else{
-          clip.start();
+          clip.start(); // Java Sound Clip for WAV file
           audioStarted = true;
           println("[DEBUG] Audio avviato, startTime = " + startTime);
         }
-        
       }
     }
   }
 
-  // Calcola virtualTime
-  if (startTime >= 0) {
-    virtualTime = millis() - startTime;
+  
+  if (startTime >= 0){
+    virtualTime = millis() - startTime; //if audio started set the virtual time
   } else {
     virtualTime = 0;
   }
-
-  //println("[DEBUG] virtualTime = " + virtualTime);
-  synchronized(processedImages) {
+ 
+  //print next timestamp
+  synchronized(processedImages){
     if (!processedImages.isEmpty()) {
-      println("[DEBUG] Prossima immagine timestamp = " + processedImages.get(0).timestamp);
+      println("[DEBUG] Next image timestamp = " + processedImages.get(0).timestamp);
     }
   }
-
+  
+  //image transition
   synchronized(processedImages) {
-  // Se non c'è immagine corrente e abbiamo immagini da mostrare (prima immagine)
-  if (currentImage == null && !processedImages.isEmpty()) {
-    ScheduledImage first = processedImages.get(0);
-
-    // Assicuriamoci che il timestamp minimo sia almeno 500 ms per evitare problemi
-    int safeTimestamp = max(first.timestamp, 500);
-
-    int transitionDurationFirst = safeTimestamp / 3; // 30% della durata totale
-    int transitionStartThresholdFirst = safeTimestamp - transitionDurationFirst;
-
-    if (!transitioning && virtualTime >= transitionStartThresholdFirst) {
-      transitioning = true;
-
-      transitionStartTime = transitionStartThresholdFirst;  // uso virtualTime coerente
-      transitionDuration = transitionDurationFirst;
-
-      // NON rimuoviamo la prima immagine dalla lista, la lasciamo per sicurezza
-      pendingColors = first.precomputedColors;
-      readyForAssign = true;
-      currentImage = first;
-      transitionProgress = 0;
-
-      println("[DEBUG] Inizio transizione PRIMA immagine a virtualTime=" + virtualTime + " ms, timestamp=" + first.timestamp);
-    }
-  } 
-  // Transizioni successive
-  else if (!transitioning && !processedImages.isEmpty() && currentImage != null) {
-    ScheduledImage next = processedImages.get(0);
-    int interval = next.timestamp - currentImage.timestamp;
-
-    if (interval <= 0) {
-      println("[WARN] Interval nullo o negativo, rimuovo immagine corrotta");
-      processedImages.remove(0);
-      return;
-    }
-
-    int transitionDurationNext = (int)(interval * 0.3f);
-    int transitionStartThreshold = next.timestamp - transitionDurationNext;
-
-    if (virtualTime >= transitionStartThreshold) {
-      transitioning = true;
-
-      transitionStartTime = transitionStartThreshold;
-      transitionDuration = transitionDurationNext;
-
-      processedImages.remove(0);  // rimuove immagine già in transizione
-      pendingColors = next.precomputedColors;
-
-      readyForAssign = true;
-      currentImage = next;
-      transitionProgress = 0;
-
-      println("[DEBUG] Inizio transizione a virtualTime=" + virtualTime + " ms, timestamp=" + next.timestamp);
+    // Se non c'è immagine corrente e abbiamo immagini da mostrare (prima immagine)
+    if (currentImage == null && !processedImages.isEmpty()) {
+      ScheduledImage first = processedImages.get(0);
+      
+      if(first.timestamp == 0) {
+        // Salto la transizione e assegno subito l'immagine e i colori
+        currentImage = first;
+        pendingColors = first.precomputedColors;
+        readyForAssign = true;
+    
+        transitioning = false;
+        transitionProgress = 1.0f;  // transizione "completa"
+        transitionDuration = 0;
+    
+        processedImages.remove(0);
+    
+        println("[DEBUG] Primo timestamp 0, salto transizione e assegno immagine subito");
+      }else {
+        // Assicuriamoci che il timestamp minimo sia almeno 500 ms per evitare problemi
+        //int safeTimestamp = max(first.timestamp, 500);
+        int safeTimestamp = first.timestamp; 
+    
+        int transitionDurationFirst = safeTimestamp / 3; // 30% della durata totale
+        int transitionStartThresholdFirst = safeTimestamp - transitionDurationFirst;
+    
+        if (!transitioning && virtualTime >= transitionStartThresholdFirst) {
+          transitioning = true;
+    
+          transitionStartTime = transitionStartThresholdFirst;  // uso virtualTime coerente
+          transitionDuration = transitionDurationFirst;
+    
+          // NON rimuoviamo la prima immagine dalla lista, la lasciamo per sicurezza
+          pendingColors = first.precomputedColors;
+          readyForAssign = true;
+          currentImage = first;
+          transitionProgress = 0;
+          
+          processedImages.remove(0);
+    
+          println("[DEBUG] Inizio transizione PRIMA immagine a virtualTime=" + virtualTime + " ms, timestamp=" + first.timestamp);
+        }
+      }
+    } 
+    // Transizioni successive
+    else if (!transitioning && !processedImages.isEmpty() && currentImage != null) {
+      ScheduledImage next = processedImages.get(0);
+      int interval = next.timestamp - currentImage.timestamp;
+  
+      if (interval <= 0) {
+        println("[WARN] Interval nullo o negativo, rimuovo immagine corrotta");
+        processedImages.remove(0);
+        return;
+      }
+  
+      int transitionDurationNext = (int)(interval * 0.3f);
+      int transitionStartThreshold = next.timestamp - transitionDurationNext;
+  
+      if (virtualTime >= transitionStartThreshold) {
+        transitioning = true;
+  
+        transitionStartTime = transitionStartThreshold;
+        transitionDuration = transitionDurationNext;
+  
+        processedImages.remove(0);  // rimuove immagine già in transizione
+        pendingColors = next.precomputedColors;
+  
+        readyForAssign = true;
+        currentImage = next;
+        transitionProgress = 0;
+  
+        println("[DEBUG] Inizio transizione a virtualTime=" + virtualTime + " ms, timestamp=" + next.timestamp);
+      }
     }
   }
-}
 
 
   // Aggiorna il progresso della transizione
