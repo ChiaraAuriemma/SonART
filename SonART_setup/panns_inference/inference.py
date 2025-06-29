@@ -26,6 +26,10 @@ def get_filename(path):
 class AudioTagging(object):
     def __init__(self, checkpoint_path=None,checkpoint_model=None, device='cuda'):
         """Audio tagging inference wrapper.
+        Args:
+            checkpoint_path: str, path to the model weights
+            checkpoint_model: str, path to the model file
+            device: str, 'cpu' | 'cuda'
         """
         if not checkpoint_path:
             checkpoint_path = os.path.join("/content/drive/My Drive/SonART_setup","saved_model", "Cnn14_mAP=0.431.pth")

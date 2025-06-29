@@ -1,10 +1,14 @@
 {
   "groups": {
-    "People that speak": [
-    "Speech"
-    ],
     "People that speak (male)": [
         "Male speech, man speaking"
+    ],
+    "People talking": [ 
+      "Conversation",
+      "Speech"
+    ],
+    "Person giving a monologue": [ 
+      "Narration, monologue"
     ],
     "People that speak (female)": [
         "Female speech, woman speaking"
@@ -252,18 +256,14 @@
     "Rasp": [
       "Filing (rasp)"
     ],
-    "Speech": [ 
-      "Conversation",
-      "Narration, monologue",
-      "Snicker",
-      "Chuckle, chortle"
-    ],
     "Chatter":[
       "Hubbub, speech noise, speech babble"
     ],
     "Laughter": [
       "Giggle",
-      "Belly laugh"
+      "Belly laugh",
+      "Snicker",
+      "Chuckle, chortle"
     ],
     "Crying": [
       "Crying, sobbing",
