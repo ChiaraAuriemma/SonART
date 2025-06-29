@@ -171,56 +171,50 @@ void draw() {
   
   //image transition
   synchronized(processedImages) {
-    // Se non c'è immagine corrente e abbiamo immagini da mostrare (prima immagine)
+    
+    //first image
     if (currentImage == null && !processedImages.isEmpty()) {
       ScheduledImage first = processedImages.get(0);
       
+      //case of timestamp=0
       if(first.timestamp == 0) {
-        // Salto la transizione e assegno subito l'immagine e i colori
         currentImage = first;
         pendingColors = first.precomputedColors;
         readyForAssign = true;
     
         transitioning = false;
-        transitionProgress = 1.0f;  // transizione "completa"
+        transitionProgress = 1.0f; 
         transitionDuration = 0;
     
         processedImages.remove(0);
+     
+      } else {
+        
+        int transitionDurationFirst = first.timestamp / 3; 
+        int transitionStartThresholdFirst = first.timestamp - transitionDurationFirst;
     
-        println("[DEBUG] Primo timestamp 0, salto transizione e assegno immagine subito");
-      }else {
-        // Assicuriamoci che il timestamp minimo sia almeno 500 ms per evitare problemi
-        //int safeTimestamp = max(first.timestamp, 500);
-        int safeTimestamp = first.timestamp; 
-    
-        int transitionDurationFirst = safeTimestamp / 3; // 30% della durata totale
-        int transitionStartThresholdFirst = safeTimestamp - transitionDurationFirst;
-    
-        if (!transitioning && virtualTime >= transitionStartThresholdFirst) {
+        if (!transitioning && virtualTime >= transitionStartThresholdFirst){
           transitioning = true;
     
-          transitionStartTime = transitionStartThresholdFirst;  // uso virtualTime coerente
+          transitionStartTime = transitionStartThresholdFirst;  
           transitionDuration = transitionDurationFirst;
     
-          // NON rimuoviamo la prima immagine dalla lista, la lasciamo per sicurezza
           pendingColors = first.precomputedColors;
           readyForAssign = true;
           currentImage = first;
           transitionProgress = 0;
           
           processedImages.remove(0);
-    
-          println("[DEBUG] Inizio transizione PRIMA immagine a virtualTime=" + virtualTime + " ms, timestamp=" + first.timestamp);
         }
       }
     } 
-    // Transizioni successive
+    
     else if (!transitioning && !processedImages.isEmpty() && currentImage != null) {
       ScheduledImage next = processedImages.get(0);
       int interval = next.timestamp - currentImage.timestamp;
   
       if (interval <= 0) {
-        println("[WARN] Interval nullo o negativo, rimuovo immagine corrotta");
+        println("[WARN] Interval zero or negative, removing corrupted image");
         processedImages.remove(0);
         return;
       }
@@ -234,52 +228,33 @@ void draw() {
         transitionStartTime = transitionStartThreshold;
         transitionDuration = transitionDurationNext;
   
-        processedImages.remove(0);  // rimuove immagine già in transizione
+        processedImages.remove(0);
         pendingColors = next.precomputedColors;
   
         readyForAssign = true;
         currentImage = next;
         transitionProgress = 0;
-  
-        println("[DEBUG] Inizio transizione a virtualTime=" + virtualTime + " ms, timestamp=" + next.timestamp);
       }
     }
   }
-
-
-  // Aggiorna il progresso della transizione
   
+  //set transition progresso u
   if (transitioning) {
     transitionProgress += dt / (transitionDuration / 1000.0);  // dt è in secondi, duration in ms
     transitionProgress = constrain(transitionProgress, 0, 1);
   
     if (transitionProgress >= 1) {
       transitioning = false;
-      
-      println("[DEBUG] Fine transizione a virtualTime=" + virtualTime + " ms, timestamp=" + currentImage.timestamp);
     }
   }
-  /*
-  if (transitioning) {
-    int timetoend = currentImage.timestamp - virtualTime;
-    int totalTransitionTime = currentImage.timestamp - transitionStartTime;
-    if(totalTransitionTime > 0){
-      transitionProgress = 1.0f - ((float)timetoend/(float)totalTransitionTime);
-      transitionProgress = constrain(transitionProgress, 0, 1);
-    }
-    if(virtualTime >= currentImage.timestamp){
-      transitioning = false;
-      transitionProgress = 1.0f;
-    }
-  }*/
 
-  // Applica i nuovi colori alle particelle se pronti
+  //Apply new color to the particles
   if (readyForAssign) {
-    applyPendingColors();
+    applyPendingColorsAndPosition();
     readyForAssign = false;
   }
 
-  // Aggiorna e disegna tutte le particelle
+  //Udpate particles
   for (int x = 0; x < cols; x++) {
     for (int y = 0; y < rows; y++) {
       particles[x][y].update(transitioning, transitionProgress, dt);
@@ -290,7 +265,7 @@ void draw() {
 
 
 
-// -----------------------------------------------------
+//--- initParticles ---
 void initParticles(PImage img) {
   img.loadPixels();
   for (int i = 0; i < cols; i++) {
@@ -302,8 +277,9 @@ void initParticles(PImage img) {
   }
 }
 
-// -----------------------------------------------------
-void applyPendingColors() {
+//--- applyPendingColorsAndPosition ---
+// Updates each particle's target position (x, y) and target color (pendingColors)
+void applyPendingColorsAndPosition() {
   for (int i = 0; i < cols; i++) {
     for (int j = 0; j < rows; j++) {
       particles[i][j].setNext(i * spacing, j * spacing, pendingColors[i][j]);
@@ -311,12 +287,13 @@ void applyPendingColors() {
   }
 }
 
-// -----------------------------------------------------
+//--- extractColorsInto ---
 void extractColorsInto(PImage img, color[][] dest) {
   img.loadPixels();
   for (int i = 0; i < cols; i++) {
     for (int j = 0; j < rows; j++) {
       int x = i * spacing, y = j * spacing;
+      // Extract the color at position (x, y) from the image pixels
       dest[i][j] = img.pixels[y * img.width + x];
     }
   }

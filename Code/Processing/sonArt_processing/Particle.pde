@@ -42,6 +42,7 @@ void update(boolean transitioning, float progress, float dt) {
       currentColor = lerpColor(currentColor, nextColor, eased);
 
     } else {
+      currentColor = nextColor;
       x += sin(angle) * 0.3 * dt * 10;
       y += cos(angle) * 0.3 * dt * 10;
       angle += waveFrequency * dt * 30;
