@@ -10,7 +10,7 @@ class Particle {
     this.x = x;
     this.y = y;
     this.tx = x;
-    this.ty = y;'
+    this.ty = y;
     currentColor = c;
     nextColor = c;
     angle = random(TWO_PI);
@@ -33,6 +33,7 @@ void update(boolean transitioning, float progress, float dt) {
       
       x = lerp(x, tx, progress*0.1);
       y = lerp(y, ty, progress*0.1);
+      
 
       x += sin(angle) * waveAmplitude * decay * dt * 30;
       y += cos(angle) * waveAmplitude * decay * dt * 30;

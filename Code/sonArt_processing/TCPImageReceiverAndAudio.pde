@@ -4,7 +4,7 @@ class TCPImageReceiverAndAudio {
   String savedAudioPath = "";
   
   Minim minim;
-  Clip clip = null; // clip per wav
+  Clip clip = null; 
   volatile AudioPlayer player;
  
   int extention; // 0 mp3, 1 wav
@@ -55,9 +55,9 @@ class TCPImageReceiverAndAudio {
         }
       }
       try {
-        Thread.sleep(50); // aspetta un po’ prima di ricontrollare
+        Thread.sleep(50); 
       } catch (InterruptedException e) {
-        // Ignora interruzioni
+        
       }
     }
   }
@@ -128,7 +128,7 @@ class TCPImageReceiverAndAudio {
       
         
         
-        // Play lo gestisci fuori
+        
 
       } else if (dataType.equals("IMAGE")) {
         String timestampLine = reader.readLine();

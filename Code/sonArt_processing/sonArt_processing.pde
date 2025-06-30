@@ -238,9 +238,9 @@ void draw() {
     }
   }
   
-  //set transition progresso u
+  //set transition progresso 
   if (transitioning) {
-    transitionProgress += dt / (transitionDuration / 1000.0);  // dt è in secondi, duration in ms
+    transitionProgress += dt / (transitionDuration / 1000.0); 
     transitionProgress = constrain(transitionProgress, 0, 1);
   
     if (transitionProgress >= 1) {
