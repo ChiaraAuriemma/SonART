@@ -50,7 +50,7 @@ Since Google Colab cannot directly access local servers due to network restricti
 ---
 
 #### 🎛️ Use the application:
-1. Start a tunnel by running : ngrok http 1234
+1. Start a tunnel by running : ngrok tcp 12345
 2. You’ll see a public URL like https://xxxx.ngrok.io that forwards to your local service.
 3. Open the file SonART_code.ipynb on Google Colab.
 4. In the Processing connection section, enter the host and port found in the "Forwarding" line displayed in the terminal. The host usually look like this: 2.tcp.eu.ngrok.io
