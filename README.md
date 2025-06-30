@@ -58,8 +58,8 @@ Since Google Colab cannot directly access local servers due to network restricti
 6. Run all the cells in notebook
 7. You will be asked to grant access to Google Drive, please authorize it.
 8. Upload an audio file through the GUI
-9. Open the file "sonArt_processing.pde" in the "sonArt_processing" folder and run it.
-10. Use the Play button in the GUI.
+9. Open the file "sonArt_processing.pde" in the "sonArt_processing" folder that you can find in "Code".
+10. Run it and use the Play button in the GUI.
 11. Enjoy!
 
 ----
