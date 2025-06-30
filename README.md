@@ -78,7 +78,9 @@ Since Google Colab cannot directly access local servers due to network restricti
 
 </details>
 
-[![Watch the demo](./path-to-thumbnail.jpg)](https://github.com/ChiaraAuriemma/SonART/blob/main/deliveries/SonART.mp4)
+## Demo Video
+
+You can [watch the demo video here](./deliveries/SonART.mp4).
 
 ## References:
 #### Audio part:
