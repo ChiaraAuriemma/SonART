@@ -32,6 +32,10 @@ In short, the only limit is your creativity.
 
 </details>
 
+## Demo Video:
+
+You can [download and watch the demo video here](./deliveries/SonART.mp4).
+
 ## How to use:
 #### 📂 Google Drive setup:
 To use the application, you need to set up your Google Drive. This operation only needs to be done once, and after that, you’ll be ready to use the application anytime you want:
@@ -78,9 +82,6 @@ Since Google Colab cannot directly access local servers due to network restricti
 
 </details>
 
-## Demo Video:
-
-You can [watch the demo video here](./deliveries/SonART.mp4).
 
 ## References:
 #### Audio part:
