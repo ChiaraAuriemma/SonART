@@ -50,7 +50,7 @@ Since Google Colab cannot directly access local servers due to network restricti
 ---
 
 #### 🎛️ Use the application:
-1. Start a tunnel by running : ngrok tcp 12345
+1. Start a tunnel by running in your terminal : ngrok tcp 12345
 2. You’ll see a public URL like https://xxxx.ngrok.io that forwards to your local service.
 3. Open the file SonART_code.ipynb on Google Colab.
 4. In the Processing connection section, enter the host and port found in the "Forwarding" line displayed in the terminal. The host usually look like this: 2.tcp.eu.ngrok.io
@@ -71,13 +71,14 @@ Since Google Colab cannot directly access local servers due to network restricti
 - The application allows you to upload and process in advance all the files you need for your performance. Our advice is to prepare them all beforehand and then play them in the order you prefer using the play button.
 - During the processing of an audio file, the identified classes, the probability assigned to each class by the classifier, and the timestamps will be printed on screen. The generated images can be viewed through the Colab file system.
 - If you don't like the results obtained, you can always delete them through the GUI and try again with different parameters.
-- To improve the results, you have the option to ban certain labels in order to encourage the recognition of more specific ones.
+- To improve results, you can exclude certain labels by searching for them and clicking to disable. They can be re-enabled at any time.
 - You can also choose to use the threshold parameter. The idea is that if you set a high threshold, you'll get fewer labels in the output, with the risk of having no output in certain segments — but the results you do get will be more stable and reliable. With a low threshold, the opposite happens: the system becomes more responsive but less accurate.
 - Remember to include background and style to customize the generated images.
 - If you notice that it takes a bit of time to run the cells in 'Run for setup', don’t worry! That’s perfectly normal, especially the very first time you try the application, as the audio model needs to be created from scratch and loaded onto your drive. You’ll see that next time, the code will run much faster.
 
 </details>
 
+[![Watch the demo](./path-to-thumbnail.jpg)](https://github.com/ChiaraAuriemma/SonART/deliveries/SonART.mp4)
 
 ## References:
 #### Audio part:
