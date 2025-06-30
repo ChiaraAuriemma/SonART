@@ -1,51 +1,52 @@
 class TCPImageReceiverAndAudio {
   ServerSocket server;
   final List<ScheduledImage> queue;
-  Minim minim;
-  volatile AudioPlayer player; // volatile per sicurezza threading
   String savedAudioPath = "";
   
+  Minim minim;
   Clip clip = null; // clip per wav
-  
+  volatile AudioPlayer player;
+ 
   int extention; // 0 mp3, 1 wav
 
+  //starts the TCP server on the given port
   TCPImageReceiverAndAudio(int port, Minim minimInstance) {
     queue = Collections.synchronizedList(new ArrayList<>());
     minim = minimInstance;
 
     try {
       server = new ServerSocket(port);
-      println("Server TCP in ascolto sulla porta " + port);
+      println("TCP server listening on port " + port);
     } catch (IOException e) {
-      println("Errore apertura porta: " + e.getMessage());
+      println("Error opening port: " + e.getMessage());
       return;
     }
 
-    // Thread che accetta connessioni continuamente
+    //Thread to continuously accept new client connections
     new Thread(() -> {
       while (!server.isClosed()) {
         try {
           Socket client = server.accept();
-          println("Nuova connessione da " + client.getInetAddress());
+          println("New connection from " + client.getInetAddress());
 
-          // Per ogni connessione, crea thread lettura messaggi
+          //For each connection, spawn a new thread to handle it
           new Thread(() -> {
             try {
               handleClient(client);
             } catch (Exception e) {
-              println("Errore gestendo client: " + e.getMessage());
+              println("Error handling client: " + e.getMessage());
             }
           }).start();
 
         } catch (IOException e) {
-          println("Errore accettando connessione: " + e.getMessage());
+          println("Error accepting connection: "  + e.getMessage());
           break;
         }
       }
     }).start();
   }
 
-  // Blocca finché non c’è almeno una immagine, poi la rimuove e restituisce
+  //Waits until an image is available in the synchronized queue, then removes and returns it.
   ScheduledImage nextImageBlocking() {
     while (true) {
       synchronized(queue) {
@@ -60,14 +61,16 @@ class TCPImageReceiverAndAudio {
       }
     }
   }
+  
 
-  // Gestisce lettura dati da client finché la connessione è aperta
+  // Handles incoming data from the connected client
   private void handleClient(Socket client) throws IOException {
     BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream(), "UTF-8"));
     String dataType;
 
     while ((dataType = reader.readLine()) != null) {
       if (dataType.equals("AUDIO")) {
+        // Read audio data until EOF marker is reached
         StringBuilder audioBuilder = new StringBuilder();
         String line;
         String EOF_MARKER = "<<EOF>>";
@@ -81,8 +84,9 @@ class TCPImageReceiverAndAudio {
         }
 
         String base64Audio = audioBuilder.toString();
-        println("📥 Audio base64 ricevuto, lunghezza: " + base64Audio.length());
+        println("Received base64 audio, length: " + base64Audio.length());
 
+        // Decode and save audio to file
         byte[] audioBytes = Base64.getDecoder().decode(base64Audio);
 
         String fileExtension = determineAudioFormat(audioBytes);
@@ -92,7 +96,7 @@ class TCPImageReceiverAndAudio {
           fos.write(audioBytes);
         }
 
-        println("💾 Audio salvato (" + fileExtension + "): " + savedAudioPath);
+        println("Audio saved (" + fileExtension + "): " + savedAudioPath);
         
         if (player != null && player.isPlaying()) {
           player.close();
@@ -103,12 +107,12 @@ class TCPImageReceiverAndAudio {
           clip.close();
         }
         
-        
+        // Load the new audio based on its format
         if (fileExtension.equals("mp3")) {
         player = minim.loadFile(savedAudioPath);
        
           } else if (fileExtension.equals("wav")) {
-        
+            // Receive and decode timestamp and image
             try {
                 File audioFile = new File(savedAudioPath);
                 AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
@@ -118,7 +122,7 @@ class TCPImageReceiverAndAudio {
                 clip.open(audioStream);
             } catch (UnsupportedAudioFileException | LineUnavailableException e) {
                 e.printStackTrace();
-                println("Errore nel caricamento del file WAV: " + e.getMessage());
+                println("Error loading WAV file: " + e.getMessage());
             }
         }
       
@@ -146,30 +150,31 @@ class TCPImageReceiverAndAudio {
             synchronized(queue) {
               queue.add(new ScheduledImage(timestamp, received));
             }
-            println("📥 Ricevuta immagine per t=" + timestamp + " ms");
+            println("Received image for t=" + timestamp + " ms");
           }
         }
       } else {
-        println("⚠️ Tipo dati sconosciuto: " + dataType);
+        println("Unknown data type: " + dataType);
         break;
       }
     }
 
-    println("Connessione client chiusa.");
+    println("Client connection closed.");
     client.close();
   }
+  
 
-  // Metodo per determinare il formato dell'audio dai byte
+  // Determines audio file format based on byte header
   private String determineAudioFormat(byte[] audioData) {
     if (audioData.length < 12) return "mp3"; // default
 
-    // MP3 header: ID3 oppure frame sync
+    //MP3 detection: ID3 header or frame sync
     if ((audioData[0] == 'I' && audioData[1] == 'D' && audioData[2] == '3') ||
         ((audioData[0] & 0xFF) == 0xFF && (audioData[1] & 0xE0) == 0xE0)) {
       extention = 0; 
       return "mp3";
     }
-    // WAV header: RIFF + WAVE
+    //WAV detection: RIFF + WAVE
     if (audioData[0] == 'R' && audioData[1] == 'I' && audioData[2] == 'F' && audioData[3] == 'F' &&
         audioData[8] == 'W' && audioData[9] == 'A' && audioData[10] == 'V' && audioData[11] == 'E') {
       extention =1; 

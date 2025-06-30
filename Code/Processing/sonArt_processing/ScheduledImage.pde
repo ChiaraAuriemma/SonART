@@ -1,7 +1,7 @@
 class ScheduledImage {
   int timestamp;
   PImage img;
-  color[][] precomputedColors;  // <-- Aggiungi questa riga!
+  color[][] precomputedColors; 
 
   ScheduledImage(int t, PImage i) {
     timestamp = t;
