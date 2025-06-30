@@ -36,7 +36,7 @@ In short, the only limit is your creativity.
 #### 📂 Google Drive setup:
 To use the application, you need to set up your Google Drive. This operation only needs to be done once, and after that, you’ll be ready to use the application anytime you want:
 
-1. Upload the SonART_setup folder from the repository to your Google Drive.
+1. Upload the "SonART_setup" folder from the repository to your Google Drive.
 
 ---
 
@@ -52,13 +52,13 @@ Since Google Colab cannot directly access local servers due to network restricti
 #### 🎛️ Use the application:
 1. Start a tunnel by running in your terminal : ngrok tcp 12345
 2. You’ll see a public URL like https://xxxx.ngrok.io that forwards to your local service.
-3. Open the file SonART_code.ipynb on Google Colab.
-4. In the Processing connection section, enter the host and port found in the "Forwarding" line displayed in the terminal. The host usually look like this: 2.tcp.eu.ngrok.io
+3. Open the file "SonART_code.ipynb" on Google Colab, you can find it in the "Code" folder.
+4. In the "Processing connection" section, enter the host and port found in the "Forwarding" line displayed in the terminal. The host usually look like this: 2.tcp.eu.ngrok.io
 5. On Colab make sure you are using the GPU.
 6. Run all the cells in notebook
 7. You will be asked to grant access to Google Drive, please authorize it.
 8. Upload an audio file through the GUI
-9. Open the file SonART_processing.pde and run it.
+9. Open the file "sonArt_processing.pde" in the "sonArt_processing" folder and run it.
 10. Use the Play button in the GUI.
 11. Enjoy!
 
